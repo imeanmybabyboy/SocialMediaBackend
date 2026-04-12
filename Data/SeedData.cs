@@ -1,6 +1,4 @@
 ﻿using ASP_PV411.Services.Kdf;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMediaBackend.Data.Entities;
 
 namespace SocialMediaBackend.Data
@@ -152,7 +150,8 @@ namespace SocialMediaBackend.Data
                     Title = "Welcome Post",
                     Bio = "This is the very first post in the system.",
                     LikesQnt = 10,
-                    SharesQnt = 2
+                    SharesQnt = 2,
+                    CreatedAt = new DateTime(2026, 03, 01)
                 },
                 new Post
                 {
@@ -170,7 +169,8 @@ namespace SocialMediaBackend.Data
                     Title = "Maria’s First Post",
                     Bio = "Hello everyone, glad to join!",
                     LikesQnt = 7,
-                    SharesQnt = 0
+                    SharesQnt = 0,
+                    CreatedAt = new DateTime(2026, 03, 01)
                 },
                 new Post
                 {
@@ -179,7 +179,8 @@ namespace SocialMediaBackend.Data
                     Title = "Alex’s Update",
                     Bio = "Quick update from Alex.",
                     LikesQnt = 3,
-                    SharesQnt = 1
+                    SharesQnt = 1,
+                    CreatedAt = new DateTime(2026, 03, 03)
                 },
                 new Post
                 {
@@ -188,7 +189,8 @@ namespace SocialMediaBackend.Data
                     Title = "Sofia’s Post",
                     Bio = "Excited to share my first post.",
                     LikesQnt = 12,
-                    SharesQnt = 4
+                    SharesQnt = 4,
+                    CreatedAt = new DateTime(2026, 02, 01)
                 },
                 new Post
                 {
@@ -197,7 +199,8 @@ namespace SocialMediaBackend.Data
                     Title = "Mike’s Thoughts",
                     Bio = "Mike shares his ideas.",
                     LikesQnt = 8,
-                    SharesQnt = 2
+                    SharesQnt = 2,
+                    CreatedAt = new DateTime(2026, 03, 02)
                 },
                 new Post
                 {
@@ -206,7 +209,8 @@ namespace SocialMediaBackend.Data
                     Title = "Olga’s Story",
                     Bio = "Olga writes about her day.",
                     LikesQnt = 15,
-                    SharesQnt = 5
+                    SharesQnt = 5,
+                    CreatedAt = new DateTime(2026, 03, 03)
                 },
                 new Post
                 {
@@ -215,7 +219,8 @@ namespace SocialMediaBackend.Data
                     Title = "Ivan’s Rock",
                     Bio = "Ivan shares his music journey.",
                     LikesQnt = 20,
-                    SharesQnt = 7
+                    SharesQnt = 7,
+                    CreatedAt = new DateTime(2026, 03, 04)
                 },
                 new Post
                 {
@@ -224,7 +229,8 @@ namespace SocialMediaBackend.Data
                     Title = "Admin’s Announcement",
                     Bio = "Important system update.",
                     LikesQnt = 30,
-                    SharesQnt = 10
+                    SharesQnt = 10,
+                    CreatedAt = new DateTime(2026, 03, 05)
                 },
                 new Post
                 {
@@ -233,7 +239,8 @@ namespace SocialMediaBackend.Data
                     Title = "John’s Travel",
                     Bio = "Sharing my travel experience.",
                     LikesQnt = 18,
-                    SharesQnt = 6
+                    SharesQnt = 6,
+                    CreatedAt = new DateTime(2026, 03, 03)
                 },
                 new Post
                 {
@@ -242,7 +249,8 @@ namespace SocialMediaBackend.Data
                     Title = "Maria’s Recipe",
                     Bio = "Cooking tips and tricks.",
                     LikesQnt = 25,
-                    SharesQnt = 9
+                    SharesQnt = 9,
+                    CreatedAt = new DateTime(2026, 03, 04)
                 },
                 new Post
                 {
@@ -251,7 +259,8 @@ namespace SocialMediaBackend.Data
                     Title = "Alex’s Coding",
                     Bio = "Alex shares coding tips.",
                     LikesQnt = 14,
-                    SharesQnt = 3
+                    SharesQnt = 3,
+                    CreatedAt = new DateTime(2026, 03, 06)
                 },
                 new Post
                 {
@@ -260,7 +269,8 @@ namespace SocialMediaBackend.Data
                     Title = "Sofia’s Art",
                     Bio = "My latest painting.",
                     LikesQnt = 22,
-                    SharesQnt = 8
+                    SharesQnt = 8,
+                    CreatedAt = new DateTime(2026, 03, 07)
                 },
                 new Post
                 {
@@ -269,7 +279,8 @@ namespace SocialMediaBackend.Data
                     Title = "Mike’s Fitness",
                     Bio = "Workout routines.",
                     LikesQnt = 16,
-                    SharesQnt = 5
+                    SharesQnt = 5,
+                    CreatedAt = new DateTime(2026, 03, 08)
                 },
                 new Post
                 {
@@ -278,7 +289,8 @@ namespace SocialMediaBackend.Data
                     Title = "Olga’s Book Review",
                     Bio = "Reviewing my favorite book.",
                     LikesQnt = 19,
-                    SharesQnt = 7
+                    SharesQnt = 7,
+                    CreatedAt = new DateTime(2026, 03, 08)
                 },
                 new Post
                 {
@@ -287,7 +299,8 @@ namespace SocialMediaBackend.Data
                     Title = "Ivan’s Sports",
                     Bio = "Football match highlights.",
                     LikesQnt = 28,
-                    SharesQnt = 11
+                    SharesQnt = 11,
+                    CreatedAt = new DateTime(2026, 03, 09)
                 },
                 new Post
                 {
@@ -296,7 +309,8 @@ namespace SocialMediaBackend.Data
                     Title = "Admin’s Tips",
                     Bio = "System usage tips.",
                     LikesQnt = 12,
-                    SharesQnt = 4
+                    SharesQnt = 4,
+                    CreatedAt = new DateTime(2026, 03, 10)
                 },
                 new Post
                 {
@@ -305,7 +319,8 @@ namespace SocialMediaBackend.Data
                     Title = "John’s Music",
                     Bio = "Sharing my playlist.",
                     LikesQnt = 21,
-                    SharesQnt = 8
+                    SharesQnt = 8,
+                    CreatedAt = new DateTime(2026, 03, 09)
                 },
                 new Post
                 {
@@ -314,7 +329,8 @@ namespace SocialMediaBackend.Data
                     Title = "Maria’s Travel",
                     Bio = "Trip to the mountains.",
                     LikesQnt = 17,
-                    SharesQnt = 6
+                    SharesQnt = 6,
+                    CreatedAt = new DateTime(2026, 03, 10)
                 },
                 new Post
                 {
@@ -323,7 +339,8 @@ namespace SocialMediaBackend.Data
                     Title = "Alex’s Gaming",
                     Bio = "Latest game review.",
                     LikesQnt = 24,
-                    SharesQnt = 9
+                    SharesQnt = 9,
+                    CreatedAt = new DateTime(2026, 03, 11)
                 },
                 new Post
                 {
@@ -332,7 +349,8 @@ namespace SocialMediaBackend.Data
                     Title = "Sofia’s Travel",
                     Bio = "Trip to the seaside.",
                     LikesQnt = 13,
-                    SharesQnt = 4
+                    SharesQnt = 4,
+                    CreatedAt = new DateTime(2026, 03, 12)
                 },
                 new Post
                 {
@@ -341,7 +359,8 @@ namespace SocialMediaBackend.Data
                     Title = "Mike’s Coding Journey",
                     Bio = "Learning C# step by step.",
                     LikesQnt = 9,
-                    SharesQnt = 3
+                    SharesQnt = 3,
+                    CreatedAt = new DateTime(2026, 03, 04)
                 },
                 new Post
                 {
@@ -350,7 +369,8 @@ namespace SocialMediaBackend.Data
                     Title = "Olga’s Cooking",
                     Bio = "My favorite recipes.",
                     LikesQnt = 27,
-                    SharesQnt = 12
+                    SharesQnt = 12,
+                    CreatedAt = new DateTime(2026, 03, 05)
                 },
                 new Post
                 {
@@ -359,7 +379,8 @@ namespace SocialMediaBackend.Data
                     Title = "Ivan’s Hiking",
                     Bio = "Exploring the forest trails.",
                     LikesQnt = 19,
-                    SharesQnt = 6
+                    SharesQnt = 6,
+                    CreatedAt = new DateTime(2026, 03, 06)
                 },
                 new Post
                 {
@@ -368,7 +389,8 @@ namespace SocialMediaBackend.Data
                     Title = "Admin’s Security Tips",
                     Bio = "How to keep your account safe.",
                     LikesQnt = 33,
-                    SharesQnt = 14
+                    SharesQnt = 14,
+                    CreatedAt = new DateTime(2026, 03, 12)
                 },
                 new Post
                 {
@@ -377,7 +399,8 @@ namespace SocialMediaBackend.Data
                     Title = "John’s Photography",
                     Bio = "Capturing the sunset.",
                     LikesQnt = 22,
-                    SharesQnt = 7
+                    SharesQnt = 7,
+                    CreatedAt = new DateTime(2026, 03, 01)
                 }
             };
         }

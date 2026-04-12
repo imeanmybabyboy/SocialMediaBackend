@@ -144,6 +144,12 @@ namespace SocialMediaBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -175,6 +181,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a1111111-1111-1111-1111-111111111111"),
                             Bio = "This is the very first post in the system.",
+                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 10,
                             SharesQnt = 2,
                             Title = "Welcome Post",
@@ -184,6 +191,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a2222222-2222-2222-2222-222222222222"),
                             Bio = "Sharing some daily reflections.",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 5,
                             SharesQnt = 1,
                             Title = "Daily Thoughts",
@@ -193,6 +201,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a3333333-3333-3333-3333-333333333333"),
                             Bio = "Hello everyone, glad to join!",
+                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 7,
                             SharesQnt = 0,
                             Title = "Maria’s First Post",
@@ -202,6 +211,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a4444444-4444-4444-4444-444444444444"),
                             Bio = "Quick update from Alex.",
+                            CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 3,
                             SharesQnt = 1,
                             Title = "Alex’s Update",
@@ -211,6 +221,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a5555555-5555-5555-5555-555555555555"),
                             Bio = "Excited to share my first post.",
+                            CreatedAt = new DateTime(2026, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 12,
                             SharesQnt = 4,
                             Title = "Sofia’s Post",
@@ -220,6 +231,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a6666666-6666-6666-6666-666666666666"),
                             Bio = "Mike shares his ideas.",
+                            CreatedAt = new DateTime(2026, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 8,
                             SharesQnt = 2,
                             Title = "Mike’s Thoughts",
@@ -229,6 +241,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a7777777-7777-7777-7777-777777777777"),
                             Bio = "Olga writes about her day.",
+                            CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 15,
                             SharesQnt = 5,
                             Title = "Olga’s Story",
@@ -238,6 +251,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a8888888-8888-8888-8888-888888888888"),
                             Bio = "Ivan shares his music journey.",
+                            CreatedAt = new DateTime(2026, 3, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 20,
                             SharesQnt = 7,
                             Title = "Ivan’s Rock",
@@ -247,6 +261,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("a9999999-9999-9999-9999-999999999999"),
                             Bio = "Important system update.",
+                            CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 30,
                             SharesQnt = 10,
                             Title = "Admin’s Announcement",
@@ -256,6 +271,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b1111111-1111-1111-1111-111111111111"),
                             Bio = "Sharing my travel experience.",
+                            CreatedAt = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 18,
                             SharesQnt = 6,
                             Title = "John’s Travel",
@@ -265,6 +281,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b2222222-2222-2222-2222-222222222222"),
                             Bio = "Cooking tips and tricks.",
+                            CreatedAt = new DateTime(2026, 3, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 25,
                             SharesQnt = 9,
                             Title = "Maria’s Recipe",
@@ -274,6 +291,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b3333333-3333-3333-3333-333333333333"),
                             Bio = "Alex shares coding tips.",
+                            CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 14,
                             SharesQnt = 3,
                             Title = "Alex’s Coding",
@@ -283,6 +301,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b4444444-4444-4444-4444-444444444444"),
                             Bio = "My latest painting.",
+                            CreatedAt = new DateTime(2026, 3, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 22,
                             SharesQnt = 8,
                             Title = "Sofia’s Art",
@@ -292,6 +311,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b5555555-5555-5555-5555-555555555555"),
                             Bio = "Workout routines.",
+                            CreatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 16,
                             SharesQnt = 5,
                             Title = "Mike’s Fitness",
@@ -301,6 +321,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b6666666-6666-6666-6666-666666666666"),
                             Bio = "Reviewing my favorite book.",
+                            CreatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 19,
                             SharesQnt = 7,
                             Title = "Olga’s Book Review",
@@ -310,6 +331,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b7777777-7777-7777-7777-777777777777"),
                             Bio = "Football match highlights.",
+                            CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 28,
                             SharesQnt = 11,
                             Title = "Ivan’s Sports",
@@ -319,6 +341,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b8888888-8888-8888-8888-888888888888"),
                             Bio = "System usage tips.",
+                            CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 12,
                             SharesQnt = 4,
                             Title = "Admin’s Tips",
@@ -328,6 +351,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("b9999999-9999-9999-9999-999999999999"),
                             Bio = "Sharing my playlist.",
+                            CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 21,
                             SharesQnt = 8,
                             Title = "John’s Music",
@@ -337,6 +361,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c1111111-1111-1111-1111-111111111111"),
                             Bio = "Trip to the mountains.",
+                            CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 17,
                             SharesQnt = 6,
                             Title = "Maria’s Travel",
@@ -346,6 +371,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c2222222-2222-2222-2222-222222222222"),
                             Bio = "Latest game review.",
+                            CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 24,
                             SharesQnt = 9,
                             Title = "Alex’s Gaming",
@@ -355,6 +381,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c3333333-3333-3333-3333-333333333333"),
                             Bio = "Trip to the seaside.",
+                            CreatedAt = new DateTime(2026, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 13,
                             SharesQnt = 4,
                             Title = "Sofia’s Travel",
@@ -364,6 +391,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c4444444-4444-4444-4444-444444444444"),
                             Bio = "Learning C# step by step.",
+                            CreatedAt = new DateTime(2026, 3, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 9,
                             SharesQnt = 3,
                             Title = "Mike’s Coding Journey",
@@ -373,6 +401,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c5555555-5555-5555-5555-555555555555"),
                             Bio = "My favorite recipes.",
+                            CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 27,
                             SharesQnt = 12,
                             Title = "Olga’s Cooking",
@@ -382,6 +411,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c6666666-6666-6666-6666-666666666666"),
                             Bio = "Exploring the forest trails.",
+                            CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 19,
                             SharesQnt = 6,
                             Title = "Ivan’s Hiking",
@@ -391,6 +421,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c7777777-7777-7777-7777-777777777777"),
                             Bio = "How to keep your account safe.",
+                            CreatedAt = new DateTime(2026, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 33,
                             SharesQnt = 14,
                             Title = "Admin’s Security Tips",
@@ -400,6 +431,7 @@ namespace SocialMediaBackend.Migrations
                         {
                             Id = new Guid("c8888888-8888-8888-8888-888888888888"),
                             Bio = "Capturing the sunset.",
+                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LikesQnt = 22,
                             SharesQnt = 7,
                             Title = "John’s Photography",

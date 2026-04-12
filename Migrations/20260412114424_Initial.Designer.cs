@@ -12,7 +12,7 @@ using SocialMediaBackend.Data;
 namespace SocialMediaBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260411150258_Initial")]
+    [Migration("20260412114424_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -74,6 +74,12 @@ namespace SocialMediaBackend.Migrations
                     b.Property<string>("Bio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");

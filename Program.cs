@@ -5,6 +5,7 @@ using ASP_PV411.Services.Random;
 using ASP_PV411.Services.Salt;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data;
+using SocialMediaBackend.Services.AppService;
 
 namespace SocialMediaBackend
 {
@@ -19,6 +20,7 @@ namespace SocialMediaBackend
             builder.Services.AddHash();
             builder.Services.AddKdf();
             builder.Services.AddSalt();
+            builder.Services.AddScoped<IAppService, AppService>();
 
             // Session
             builder.Services.AddDistributedMemoryCache();
@@ -38,6 +40,7 @@ namespace SocialMediaBackend
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                 ));
+            builder.Services.AddScoped<DataAccessor>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

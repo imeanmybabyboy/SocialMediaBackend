@@ -62,7 +62,9 @@ namespace SocialMediaBackend.Migrations
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LikesQnt = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    SharesQnt = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    SharesQnt = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,4 +1,4 @@
-﻿namespace SocialMediaBackend.Data.Entities
+﻿namespace SocialMediaBackend.Models.Post
 {
     public class Post
     {
@@ -11,9 +11,6 @@
         public int SharesQnt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
-
-        public User User { get; set; } = null!;
-
-        public List<Comment> Comments { get; set; } = [];
+        public List<Comment.Comment> Comments { get; set; } = [];
     }
 }

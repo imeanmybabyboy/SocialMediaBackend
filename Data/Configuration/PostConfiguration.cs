@@ -22,6 +22,10 @@ namespace SocialMediaBackend.Data.Configuration
             modelBuilder
                 .Property(p => p.SharesQnt)
                 .HasDefaultValue(0);
+
+            modelBuilder
+                .Property(p => p.DeletedAt)
+                .IsRequired(false);
         }
     }
 }
