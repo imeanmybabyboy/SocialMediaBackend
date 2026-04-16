@@ -37,6 +37,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
                 RoleId = Guid.Parse("A3F2E1B4-9C5D-4F2A-8D7A-1B2C3D4E5F6A"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                 Login = "admin",
                 Nickname = "SuperAdmin",
                 Email = "ADMIN@EXAMPLE.COM",
@@ -48,6 +49,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                 Login = "john",
                 Nickname = "JohnDoe",
                 Email = "JOHN@EXAMPLE.COM",
@@ -59,6 +61,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                 Login = "maria",
                 Nickname = "MariaSky",
                 Email = "MARIA@EXAMPLE.COM",
@@ -70,6 +73,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                 Login = "alex",
                 Nickname = "AlexStorm",
                 Email = "ALEX@EXAMPLE.COM",
@@ -81,6 +85,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                 Login = "sofia",
                 Nickname = "SofiaLight",
                 Email = "SOFIA@EXAMPLE.COM",
@@ -92,6 +97,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000006"),
                 Login = "mike",
                 Nickname = "MikeWave",
                 Email = "MIKE@EXAMPLE.COM",
@@ -103,6 +109,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                 Login = "olga",
                 Nickname = "OlgaStar",
                 Email = "OLGA@EXAMPLE.COM",
@@ -114,6 +121,7 @@ namespace SocialMediaBackend.Data
             {
                 Id = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"),
                 RoleId = Guid.Parse("B4C5D6E7-8F9A-4B1C-9D2E-3F4A5B6C7D8E"),
+                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                 Login = "ivan",
                 Nickname = "IvanRock",
                 Email = "IVAN@EXAMPLE.COM",
@@ -478,6 +486,60 @@ namespace SocialMediaBackend.Data
                     IsEdited = false
                 }
                 };
+        }
+        public static Race[] Races()
+        {
+            return
+            [
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
+                    Name = "Human",
+                    ThemeColorHex = "#C0A080" // нейтральний тілесний
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000002"),
+                    Name = "Elf",
+                    ThemeColorHex = "#7FFFD4" // легкий магічний бірюзовий
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000003"),
+                    Name = "Dark Elf",
+                    ThemeColorHex = "#4B0082" // темно-фіолетовий
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000004"),
+                    Name = "Dwarf",
+                    ThemeColorHex = "#8B4513" // коричневий (земля/камінь)
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000005"),
+                    Name = "Orc",
+                    ThemeColorHex = "#556B2F" // темно-зелений
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000006"),
+                    Name = "Troll",
+                    ThemeColorHex = "#2E8B57" // болотний зелений
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000007"),
+                    Name = "Halfling",
+                    ThemeColorHex = "#DEB887" // теплий світлий
+                },
+                new Race
+                {
+                    Id = Guid.Parse("10000000-0000-0000-0000-000000000008"),
+                    Name = "Dragonborn",
+                    ThemeColorHex = "#B22222" // червоний (дракон)
+                }
+            ];
         }
     }
 }

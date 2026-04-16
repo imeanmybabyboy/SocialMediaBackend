@@ -4,6 +4,7 @@
     {
         public Guid Id { get; set; }
         public Guid? RoleId { get; set; }
+        public Guid? RaceId { get; set; }
         public string Login { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public string? Bio { get; set; }
@@ -20,6 +21,7 @@
         public List<Post> Posts { get; set; } = [];
 
         public List<Comment> Comments { get; set; } = [];
+        public Race Race { get; set; } = null!;
 
     }
 }

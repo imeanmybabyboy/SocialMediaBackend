@@ -5,5 +5,7 @@ namespace SocialMediaBackend.Services.AppService
     public interface IAppService
     {
         public Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10);
+        public Task<RestResponse> GetRacesAsync();
+        public Task<RestResponse> SignInAsync(string authHeader);
     }
 }

@@ -20,7 +20,7 @@ namespace SocialMediaBackend.Data
         {
             page = page < 1 ? 1 : page;
 
-            var posts = await dataContext
+            Task<List<Models.Post.Post>> posts = dataContext
                 .Posts
                 .AsNoTracking()
                 .Include(p => p.Comments)
@@ -53,7 +53,32 @@ namespace SocialMediaBackend.Data
                 })
                 .ToListAsync();
 
-            return posts;
+            return await posts;
+        }
+
+        public async Task<List<Models.Race.Race>> GetRacesAsync()
+        {
+            Task<List<Models.Race.Race>> raceTask = dataContext
+                .Races
+                .AsNoTracking()
+                .Select(r => new Models.Race.Race
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    ThemeColorHex = r.ThemeColorHex
+                })
+                .ToListAsync();
+
+            return await raceTask;
+        }
+
+        public async Task<Entities.User?> GetUserAsyncByLogin(string login)
+        {
+            var user = dataContext
+                .Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Login.Trim() == login && u.DeletedAt == null);
+            return await user;
         }
     }
 }

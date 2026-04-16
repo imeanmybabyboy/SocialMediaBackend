@@ -12,6 +12,7 @@ namespace SocialMediaBackend.Data
         public DbSet<Entities.UserRole> UserRoles { get; set; }
         public DbSet<Entities.Comment> Comments { get; set; }
         public DbSet<Entities.Post> Posts { get; set; }
+        public DbSet<Entities.Race> Races { get; set; }
 
         public DataContext(DbContextOptions options, IKdfService kdfService) : base(options)
         {
@@ -26,6 +27,7 @@ namespace SocialMediaBackend.Data
             modelBuilder.Entity<UserRole>().HasData(SeedData.UserRoles());
             modelBuilder.Entity<Post>().HasData(SeedData.Posts());
             modelBuilder.Entity<Comment>().HasData(SeedData.Comments());
+            modelBuilder.Entity<Race>().HasData(SeedData.Races());
         }
     }
 }

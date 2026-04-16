@@ -3,7 +3,7 @@
     public class RestMeta
     {
         public string Service { get; set; } = null!;
-        public string Resouce { get; set; } = null!;
+        public string Resource { get; set; } = null!;
         public string Method { get; set; } = null!;
         public string Path { get; set; } = null!;
         public string DataType { get; set; } = null!;
