@@ -50,7 +50,7 @@ namespace SocialMediaBackend
 
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<DbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
                 if (dbContext.Database.IsRelational())
                 {
                     dbContext.Database.Migrate();
