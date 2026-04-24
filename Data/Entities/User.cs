@@ -22,6 +22,7 @@
 
         public List<Comment> Comments { get; set; } = [];
         public Race Race { get; set; } = null!;
+        public Interest[] Interests { get; set; } = [];
 
     }
 }

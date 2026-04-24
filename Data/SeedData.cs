@@ -489,57 +489,23 @@ namespace SocialMediaBackend.Data
         }
         public static Race[] Races()
         {
-            return
-            [
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
-                    Name = "Human",
-                    ThemeColorHex = "#C0A080" // нейтральний тілесний
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000002"),
-                    Name = "Elf",
-                    ThemeColorHex = "#7FFFD4" // легкий магічний бірюзовий
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000003"),
-                    Name = "Dark Elf",
-                    ThemeColorHex = "#4B0082" // темно-фіолетовий
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000004"),
-                    Name = "Dwarf",
-                    ThemeColorHex = "#8B4513" // коричневий (земля/камінь)
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000005"),
-                    Name = "Orc",
-                    ThemeColorHex = "#556B2F" // темно-зелений
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000006"),
-                    Name = "Troll",
-                    ThemeColorHex = "#2E8B57" // болотний зелений
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000007"),
-                    Name = "Halfling",
-                    ThemeColorHex = "#DEB887" // теплий світлий
-                },
-                new Race
-                {
-                    Id = Guid.Parse("10000000-0000-0000-0000-000000000008"),
-                    Name = "Dragonborn",
-                    ThemeColorHex = "#B22222" // червоний (дракон)
-                }
-            ];
+            return [
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000001"), Name = "Elf", ThemeColorHex = "#3bff5e" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000002"), Name = "Dark Elf", ThemeColorHex = "#7a3bff" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000003"), Name = "Dwarf", ThemeColorHex = "#b87333" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000004"), Name = "Human", ThemeColorHex = "#3b82ff" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000005"), Name = "Orc", ThemeColorHex = "#4b5320" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000006"), Name = "Vampire", ThemeColorHex = "#8b0000" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000007"), Name = "Werewolf", ThemeColorHex = "#5c4033" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000008"), Name = "Goblin", ThemeColorHex = "#7fff00" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000009"), Name = "Troll", ThemeColorHex = "#556b2f" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000010"), Name = "Dragonborn", ThemeColorHex = "#ff7a3b" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000011"), Name = "Angel", ThemeColorHex = "#ffd700" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000012"), Name = "Demon", ThemeColorHex = "#ff3b3b" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000013"), Name = "Undead", ThemeColorHex = "#aaaaaa" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000014"), Name = "Fairy", ThemeColorHex = "#ff69b4" },
+            new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000015"), Name = "Elemental", ThemeColorHex = "#3bfff2" }
+];
         }
     }
 }

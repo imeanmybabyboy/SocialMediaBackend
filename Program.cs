@@ -36,7 +36,7 @@ namespace SocialMediaBackend
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddCors(options =>
                 options.AddDefaultPolicy(policy =>
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins("http://localhost:5173")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                 ));
@@ -55,6 +55,7 @@ namespace SocialMediaBackend
             }
 
             app.UseHttpsRedirection();
+            app.UseCors();
 
             app.UseAuthorization();
             app.UseSession();
