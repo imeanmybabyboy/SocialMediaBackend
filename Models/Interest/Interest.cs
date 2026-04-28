@@ -1,4 +1,4 @@
-﻿namespace SocialMediaBackend.Data.Entities
+﻿namespace SocialMediaBackend.Models.Interest
 {
     public class Interest
     {
@@ -6,7 +6,5 @@
         public string Name { get; set; } = null!;
         public string Emoji { get; set; } = null!;
         public string Color { get; set; } = null!;
-
-        public List<UserInterest> UserInterests { get; set; } = [];
     }
 }

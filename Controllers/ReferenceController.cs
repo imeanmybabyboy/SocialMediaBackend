@@ -8,10 +8,10 @@ namespace SocialMediaBackend.Controllers
     [ApiController]
     public class ReferenceController(IAppService appService) : ControllerBase
     {
-        [HttpGet("races/")]
-        public async Task<RestResponse> ApiGetRacesAsync()
+        [HttpGet("additionalSignUpInfo/")]
+        public async Task<RestResponse> ApiGetAdditionalSignUpInfoAsync()
         {
-            return await appService.GetRacesAsync();
+            return await appService.GetAdditionalSignUpInfoAsync();
         }
     }
 }

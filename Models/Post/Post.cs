@@ -4,6 +4,7 @@
     {
         public Guid Id { get; set; }
         public Guid? UserId { get; set; }
+        public Race.Race Race { get; set; } = null!;
         public string Title { get; set; } = null!;
         public string? ImageUrl { get; set; } = null!;
         public string Bio { get; set; } = null!;

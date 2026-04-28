@@ -1,31 +1,27 @@
-﻿using SocialMediaBackend.Exceptions;
+﻿using ASP_PV411.Services.Kdf;
+using ASP_PV411.Services.Salt;
 using SocialMediaBackend.Data;
 using SocialMediaBackend.Data.Entities;
+using SocialMediaBackend.Exceptions;
 using SocialMediaBackend.Models.Rest;
+using SocialMediaBackend.Models.User;
 using System.Text;
-using ASP_PV411.Services.Kdf;
 
 namespace SocialMediaBackend.Services.AppService
 {
-    public class AppService(DataAccessor dataAccessor, IKdfService kdfService) : IAppService
+    public class AppService(DataAccessor dataAccessor, IKdfService kdfService, ISaltService saltService) : IAppService
     {
-        private const string UnauthorizedError = "Unauthorized action";
-        private const string UserNotFoundError = "User not found";
-        private const string NoChangesToSaveError = "No changes to save";
-        private const string ChangesSavedWarning = "Changes were saved successfully";
         private const string UnavailableHttpContextError = "HttpContext is not available";
         private const string MissingAuthorizationHeaderError = "Missing Authorization header";
         private const string InvalidAuthorizationSchemeError = "Invalid Authorization scheme";
         private const string CredentialsError = "Invalid or empty Credentials";
         private const string AuthorizationFormatError = "Invalid Authorization format";
         private const string InvalidUserPasswordFormat = "Invalid user-pass format";
-        private const string InvalidCredentialsError = "The email or password you entered is not valid. Please try again";
-        private const string CategoryExistsError = "Category already exists";
-        private const string CategoryAddedWarning = "Category was added";
-        private const string SubcategoryExistsError = "Subcategory already exists";
-        private const string SubcategoryAddedWarning = "Subcategory was added";
-
-
+        private const string InvalidCredentialsError = "The login or password you entered is not valid. Please try again";
+        private const string UserExistsError = "User with this login already exists";
+        private const string InvalidBase64FormatError = "Invalid Base64 password format";
+        private const string LoginPasswordError = "Password must be in 'login:password' format";
+        private const string EmailExistsError = "The user with such email already exists";
 
         public async Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10)
         {
@@ -71,14 +67,15 @@ namespace SocialMediaBackend.Services.AppService
             };
         }
 
-        public async Task<RestResponse> GetRacesAsync()
+        public async Task<RestResponse> GetAdditionalSignUpInfoAsync()
         {
             RestStatus status = RestStatus.Ok;
-            List<Models.Race.Race> result = new();
+            UserSignUpViewModel result = new();
 
             try
             {
-                result = await dataAccessor.GetRacesAsync();
+                result.Races = await dataAccessor.GetRacesAsync();
+                result.Interests = await dataAccessor.GetInterestsAsync();
             }
             catch (Exception ex)
             {
@@ -93,15 +90,15 @@ namespace SocialMediaBackend.Services.AppService
             var meta = new RestMeta
             {
                 Service = "SocialMediaBackend",
-                Resource = "Races",
+                Resource = "AdditionalSignUpInfo",
                 Method = "GET",
-                Path = "/api/home/races",
+                Path = "/api/reference/additionalSignUpInfo",
                 DataType = "application/json (object)",
                 ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 Cache = 0,
                 Links = new Dictionary<string, string>
                 {
-                    { "self", $"/api/home/races" }
+                    { "self", $"/api/reference/additionalSignUpInfo" }
                 }
             };
 
@@ -133,7 +130,15 @@ namespace SocialMediaBackend.Services.AppService
                     ImageUrl = user.ImageUrl,
                     LastLoginAt = user.LastLoginAt,
                     RegisteredAt = user.RegisteredAt,
-                    DeletedAt = user.DeletedAt
+                    DeletedAt = user.DeletedAt,
+                    Interests = user.UserInterests
+                        .Select(ui => new Models.Interest.Interest
+                        {
+                            Id = ui.Interest.Id,
+                            Name = ui.Interest.Name,
+                            Emoji = ui.Interest.Emoji,
+                            Color = ui.Interest.Color
+                        }).ToList()
                 };
             }
             catch (AuthorizationHeaderException ex)
@@ -152,7 +157,7 @@ namespace SocialMediaBackend.Services.AppService
             {
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
-            catch (CredentialsException ex)
+            catch (UserException ex)
             {
                 status = new RestStatus { IsOk = false, Code = 401, Phrase = ex.Message };
             }
@@ -220,7 +225,7 @@ namespace SocialMediaBackend.Services.AppService
             string login = parts[0].ToLower().Trim();
             string password = parts[1];
 
-            var user = await dataAccessor.GetUserAsyncByLogin(login);
+            var user = await dataAccessor.GetUserByLoginAsync(login);
 
             string passwordHash = user != null ? kdfService.Dk(password, user.Salt)
                 : kdfService.Dk(password, "dummy-salt-32-chars-long-xxxx");
@@ -229,6 +234,140 @@ namespace SocialMediaBackend.Services.AppService
                 throw new CredentialsException(InvalidCredentialsError);
 
             return user;
+        }
+
+        public async Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel)
+        {
+            RestStatus status = RestStatus.Ok;
+            Models.User.UserSignInViewModel? result = null;
+
+            try
+            {
+                bool userByLoginExists = await dataAccessor.GetUserByLoginAsync(formModel.Login) != null;
+
+                if (userByLoginExists)
+                    throw new UserException(UserExistsError);
+
+                bool userByEmailExists = await dataAccessor.GetUserByEmailAsync(formModel.Email) != null;
+
+                if (userByEmailExists)
+                    throw new UserException(EmailExistsError);
+
+                string decoded;
+
+                try
+                {
+                    decoded = Encoding.UTF8.GetString(Convert.FromBase64String(formModel.Base64Password));
+                }
+                catch
+                {
+                    throw new InvalidBase64FormatException(InvalidBase64FormatError);
+                }
+
+                string[] parts = decoded.Split(':', 2);
+
+                if (parts.Length != 2)
+                    throw new LoginPasswordException(LoginPasswordError);
+
+                string userPassword = parts[1];
+
+                string salt = saltService.GetSalt();
+                var race = await dataAccessor.GetRaceByNameAsync(formModel.Race);
+                var role = await dataAccessor.GetUserRoleAsync();
+
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    RaceId = race?.Id,
+                    RoleId = role?.Id,
+                    Login = formModel.Login,
+                    Nickname = formModel.Nickname,
+                    Email = formModel.Email,
+                    ImageUrl = formModel.AvatarUrl,
+                    Salt = salt,
+                    PasswordHash = kdfService.Dk(userPassword, salt),
+                    RegisteredAt = DateTime.UtcNow,
+                };
+
+                await dataAccessor.AddUserAsync(user);
+
+                if (formModel.Interests != null && formModel.Interests.Any())
+                {
+                    foreach (var interestName in formModel.Interests)
+                    {
+                        var interest = await dataAccessor.GetInterestByNameAsync(interestName);
+                        if (interest != null)
+                        {
+                            var userInterest = new UserInterest
+                            {
+                                UserId = user.Id,
+                                InterestId = interest.Id
+                            };
+
+                            await dataAccessor.AddUserInterestAsync(userInterest);
+                        }
+                    }
+                }
+
+                user = await dataAccessor.GetUserByLoginAsync(user.Login);
+
+                result = new UserSignInViewModel
+                {
+                    Id = user!.Id,
+                    Role = role?.Title,
+                    Login = user.Login,
+                    Nickname = user.Nickname,
+                    Email = user.Email,
+                    Bio = user.Bio,
+                    ImageUrl = user.ImageUrl,
+                    LastLoginAt = user.LastLoginAt,
+                    RegisteredAt = user.RegisteredAt,
+                    Interests = user.UserInterests
+                        .Select(ui => new Models.Interest.Interest
+                        {
+                            Id = ui.Interest.Id,
+                            Name = ui.Interest.Name,
+                            Emoji = ui.Interest.Emoji,
+                            Color = ui.Interest.Color
+                        }).ToList()
+
+                };
+            }
+            catch (UserException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+            catch (InvalidBase64FormatException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+            catch (LoginPasswordException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "User",
+                Method = "POST",
+                Path = "/api/user/signup",
+                DataType = "application/json (object)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", "/api/user/signup" } }
+            };
+
+            return new RestResponse
+            {
+                Status = status,
+                Meta = meta,
+                Data = result
+            };
         }
     }
 }

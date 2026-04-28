@@ -155,6 +155,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A1111111-1111-1111-1111-111111111111"),
                     UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
+                    RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Welcome Post",
                     Bio = "This is the very first post in the system.",
                     LikesQnt = 10,
@@ -165,6 +166,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A2222222-2222-2222-2222-222222222222"),
                     UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "Daily Thoughts",
                     Bio = "Sharing some daily reflections.",
                     LikesQnt = 5,
@@ -174,6 +176,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A3333333-3333-3333-3333-333333333333"),
                     UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "Maria’s First Post",
                     Bio = "Hello everyone, glad to join!",
                     LikesQnt = 7,
@@ -184,6 +187,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A4444444-4444-4444-4444-444444444444"),
                     UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Alex’s Update",
                     Bio = "Quick update from Alex.",
                     LikesQnt = 3,
@@ -194,6 +198,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A5555555-5555-5555-5555-555555555555"),
                     UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Sofia’s Post",
                     Bio = "Excited to share my first post.",
                     LikesQnt = 12,
@@ -204,6 +209,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A6666666-6666-6666-6666-666666666666"),
                     UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000006"),
                     Title = "Mike’s Thoughts",
                     Bio = "Mike shares his ideas.",
                     LikesQnt = 8,
@@ -214,6 +220,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A7777777-7777-7777-7777-777777777777"),
                     UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                     Title = "Olga’s Story",
                     Bio = "Olga writes about her day.",
                     LikesQnt = 15,
@@ -224,6 +231,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A8888888-8888-8888-8888-888888888888"),
                     UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                     Title = "Ivan’s Rock",
                     Bio = "Ivan shares his music journey.",
                     LikesQnt = 20,
@@ -234,6 +242,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("A9999999-9999-9999-9999-999999999999"),
                     UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Admin’s Announcement",
                     Bio = "Important system update.",
                     LikesQnt = 30,
@@ -244,6 +253,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B1111111-1111-1111-1111-111111111111"),
                     UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "John’s Travel",
                     Bio = "Sharing my travel experience.",
                     LikesQnt = 18,
@@ -254,6 +264,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B2222222-2222-2222-2222-222222222222"),
                     UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "Maria’s Recipe",
                     Bio = "Cooking tips and tricks.",
                     LikesQnt = 25,
@@ -264,6 +275,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B3333333-3333-3333-3333-333333333333"),
                     UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Alex’s Coding",
                     Bio = "Alex shares coding tips.",
                     LikesQnt = 14,
@@ -274,6 +286,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B4444444-4444-4444-4444-444444444444"),
                     UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Sofia’s Art",
                     Bio = "My latest painting.",
                     LikesQnt = 22,
@@ -284,6 +297,8 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B5555555-5555-5555-5555-555555555555"),
                     UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"),
+                                                    RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
+
                     Title = "Mike’s Fitness",
                     Bio = "Workout routines.",
                     LikesQnt = 16,
@@ -294,6 +309,8 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B6666666-6666-6666-6666-666666666666"),
                     UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"),
+                                                    RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
+
                     Title = "Olga’s Book Review",
                     Bio = "Reviewing my favorite book.",
                     LikesQnt = 19,
@@ -304,6 +321,8 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B7777777-7777-7777-7777-777777777777"),
                     UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"),
+                                                    RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
+
                     Title = "Ivan’s Sports",
                     Bio = "Football match highlights.",
                     LikesQnt = 28,
@@ -314,6 +333,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B8888888-8888-8888-8888-888888888888"),
                     UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "Admin’s Tips",
                     Bio = "System usage tips.",
                     LikesQnt = 12,
@@ -324,6 +344,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("B9999999-9999-9999-9999-999999999999"),
                     UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "John’s Music",
                     Bio = "Sharing my playlist.",
                     LikesQnt = 21,
@@ -334,6 +355,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C1111111-1111-1111-1111-111111111111"),
                     UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Maria’s Travel",
                     Bio = "Trip to the mountains.",
                     LikesQnt = 17,
@@ -344,6 +366,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C2222222-2222-2222-2222-222222222222"),
                     UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Alex’s Gaming",
                     Bio = "Latest game review.",
                     LikesQnt = 24,
@@ -354,6 +377,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C3333333-3333-3333-3333-333333333333"),
                     UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000006"),
                     Title = "Sofia’s Travel",
                     Bio = "Trip to the seaside.",
                     LikesQnt = 13,
@@ -364,6 +388,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C4444444-4444-4444-4444-444444444444"),
                     UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                     Title = "Mike’s Coding Journey",
                     Bio = "Learning C# step by step.",
                     LikesQnt = 9,
@@ -374,6 +399,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C5555555-5555-5555-5555-555555555555"),
                     UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                     Title = "Olga’s Cooking",
                     Bio = "My favorite recipes.",
                     LikesQnt = 27,
@@ -384,6 +410,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C6666666-6666-6666-6666-666666666666"),
                     UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Ivan’s Hiking",
                     Bio = "Exploring the forest trails.",
                     LikesQnt = 19,
@@ -394,6 +421,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C7777777-7777-7777-7777-777777777777"),
                     UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "Admin’s Security Tips",
                     Bio = "How to keep your account safe.",
                     LikesQnt = 33,
@@ -404,6 +432,7 @@ namespace SocialMediaBackend.Data
                 {
                     Id = Guid.Parse("C8888888-8888-8888-8888-888888888888"),
                     UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"),
+                                RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "John’s Photography",
                     Bio = "Capturing the sunset.",
                     LikesQnt = 22,
@@ -506,6 +535,61 @@ namespace SocialMediaBackend.Data
             new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000014"), Name = "Fairy", ThemeColorHex = "#ff69b4" },
             new Race { Id = Guid.Parse("10000000-0000-0000-0000-000000000015"), Name = "Elemental", ThemeColorHex = "#3bfff2" }
 ];
+        }
+        public static Interest[] Interests()
+        {
+            return new[]
+            {
+                new Interest { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Name = "Sports", Emoji = "⚽", Color = "#3b82ff" },
+                new Interest { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Name = "Books", Emoji = "📚", Color = "#8b5cf6" },
+                new Interest { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Name = "Movies", Emoji = "🎬", Color = "#ff3b3b" },
+                new Interest { Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), Name = "Music", Emoji = "🎵", Color = "#ff7a3b" },
+                new Interest { Id = Guid.Parse("55555555-5555-5555-5555-555555555555"), Name = "Gaming", Emoji = "🎮", Color = "#22c55e" },
+                new Interest { Id = Guid.Parse("66666666-6666-6666-6666-666666666666"), Name = "Coding", Emoji = "💻", Color = "#06b6d4" },
+                new Interest { Id = Guid.Parse("77777777-7777-7777-7777-777777777777"), Name = "Travel", Emoji = "✈️", Color = "#facc15" },
+                new Interest { Id = Guid.Parse("88888888-8888-8888-8888-888888888888"), Name = "Fitness", Emoji = "🏋️", Color = "#ef4444" },
+                new Interest { Id = Guid.Parse("99999999-9999-9999-9999-999999999999"), Name = "Anime", Emoji = "🍥", Color = "#f472b6" },
+                new Interest { Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "Technology", Emoji = "🧠", Color = "#0ea5e9" },
+                new Interest { Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Name = "Art", Emoji = "🎨", Color = "#a855f7" },
+                new Interest { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), Name = "Photography", Emoji = "📸", Color = "#14b8a6" },
+                new Interest { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"), Name = "Science", Emoji = "🔬", Color = "#6366f1" },
+                new Interest { Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), Name = "History", Emoji = "🏺", Color = "#b45309" },
+                new Interest { Id = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff"), Name = "Cooking", Emoji = "🍳", Color = "#f97316" },
+                new Interest { Id = Guid.Parse("12121212-1212-1212-1212-121212121212"), Name = "Nature", Emoji = "🌿", Color = "#16a34a" },
+                new Interest { Id = Guid.Parse("13131313-1313-1313-1313-131313131313"), Name = "Psychology", Emoji = "🧠", Color = "#7c3aed" },
+                new Interest { Id = Guid.Parse("14141414-1414-1414-1414-141414141414"), Name = "Business", Emoji = "💼", Color = "#64748b" },
+                new Interest { Id = Guid.Parse("15151515-1515-1515-1515-151515151515"), Name = "Cars", Emoji = "🚗", Color = "#dc2626" },
+                new Interest { Id = Guid.Parse("16161616-1616-1616-1616-161616161616"), Name = "Space", Emoji = "🚀", Color = "#002f9dff" }
+            };
+        }
+        public static UserInterest[] UsersInterests()
+        {
+            return new[]
+            {
+        new UserInterest { UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"), InterestId = Guid.Parse("11111111-1111-1111-1111-111111111111") }, // Sports
+        new UserInterest { UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+
+                new UserInterest { UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+        new UserInterest { UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
+
+                new UserInterest { UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"), InterestId = Guid.Parse("33333333-3333-3333-3333-333333333333") }, // Movies
+        new UserInterest { UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+
+                new UserInterest { UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"), InterestId = Guid.Parse("55555555-5555-5555-5555-555555555555") }, // Gaming
+        new UserInterest { UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"), InterestId = Guid.Parse("88888888-8888-8888-8888-888888888888") }, // Fitness
+
+                new UserInterest { UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"), InterestId = Guid.Parse("99999999-9999-9999-9999-999999999999") }, // Anime
+        new UserInterest { UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"), InterestId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") }, // Art
+
+                new UserInterest { UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"), InterestId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa") }, // Technology
+        new UserInterest { UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"), InterestId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd") }, // Science
+
+                new UserInterest { UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"), InterestId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff") }, // Cooking
+        new UserInterest { UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"), InterestId = Guid.Parse("12121212-1212-1212-1212-121212121212") }, // Nature
+
+                new UserInterest { UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"), InterestId = Guid.Parse("15151515-1515-1515-1515-151515151515") }, // Cars
+        new UserInterest { UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"), InterestId = Guid.Parse("16161616-1616-1616-1616-161616161616") }  // Space
+            };
         }
     }
 }

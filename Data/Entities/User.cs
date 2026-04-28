@@ -8,7 +8,7 @@
         public string Login { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public string? Bio { get; set; }
-        public string? Email { get; set; }
+        public string Email { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public DateTime? LastLoginAt { get; set; }
 
@@ -22,7 +22,7 @@
 
         public List<Comment> Comments { get; set; } = [];
         public Race Race { get; set; } = null!;
-        public Interest[] Interests { get; set; } = [];
+        public List<UserInterest> UserInterests { get; set; } = [];
 
     }
 }

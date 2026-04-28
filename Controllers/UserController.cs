@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Rest;
+using SocialMediaBackend.Models.User;
 using SocialMediaBackend.Services.AppService;
 
 namespace SocialMediaBackend.Controllers
@@ -12,6 +13,14 @@ namespace SocialMediaBackend.Controllers
         public async Task<RestResponse> ApiSignInAsync()
         {
             var result = await appService.SignInAsync(Request.Headers.Authorization!);
+
+            return result;
+        }
+
+        [HttpPost("signup")]
+        public async Task<RestResponse> ApiSignUpAsync([FromBody] UserSignUpFormModel formModel)
+        {
+            var result = await appService.SignUpAsync(formModel);
 
             return result;
         }

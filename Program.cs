@@ -33,7 +33,14 @@ namespace SocialMediaBackend
             });
 
             string connectionString = builder.Configuration.GetConnectionString("SocialMediaDb") ?? throw new FileNotFoundException("Connection String Configuration: key not found: SocialMediaDb");
-            builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString, options =>
+            {
+                options.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    errorNumbersToAdd: null
+                    );
+            }));
             builder.Services.AddCors(options =>
                 options.AddDefaultPolicy(policy =>
                     policy.WithOrigins("http://localhost:5173")
@@ -54,6 +61,29 @@ namespace SocialMediaBackend
                 if (dbContext.Database.IsRelational())
                 {
                     dbContext.Database.Migrate();
+
+                    if (!dbContext.UserRoles.Any())
+                        dbContext.UserRoles.AddRange(SeedData.UserRoles());
+
+                    if (!dbContext.Races.Any())
+                        dbContext.Races.AddRange(SeedData.Races());
+
+                    if (!dbContext.Users.Any())
+                        dbContext.Users.AddRange(SeedData.Users(scope.ServiceProvider.GetRequiredService<IKdfService>()));
+
+                    if (!dbContext.Posts.Any())
+                        dbContext.Posts.AddRange(SeedData.Posts());
+
+                    if (!dbContext.Comments.Any())
+                        dbContext.Comments.AddRange(SeedData.Comments());
+
+                    if (!dbContext.Interests.Any())
+                        dbContext.Interests.AddRange(SeedData.Interests());
+
+                    if (!dbContext.UsersInterests.Any())
+                        dbContext.UsersInterests.AddRange(SeedData.UsersInterests());
+
+                    dbContext.SaveChanges();
                 }
             }
 
