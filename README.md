@@ -24,3 +24,21 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 - Update-Database
 
 ## Run the project (F5 / Ctrl + F5)
+
+## API Endpoints
+
+### HomeController:
+```
+/api/home/ApiGetPostsAsync
+```
+
+### ReferenceController:
+```
+/api/reference/ApiGetAdditionalSignUpInfoAsync
+```
+
+### UserController:
+```
+/api/user/ApiSignInAsync
+/api/user/ApiSignUpAsync
+```
