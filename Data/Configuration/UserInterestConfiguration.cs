@@ -19,7 +19,7 @@ namespace SocialMediaBackend.Data.Configuration
 
             builder
                 .HasOne(ui => ui.Interest)
-                .WithMany(i => i.UserInterests)
+                .WithMany(i => i.UsersInterests)
                 .HasForeignKey(ui => ui.InterestId);
         }
     }

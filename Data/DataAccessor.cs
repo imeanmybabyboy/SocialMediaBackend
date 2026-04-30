@@ -26,6 +26,8 @@ namespace SocialMediaBackend.Data
                 .AsNoTracking()
                 .Include(p => p.Comments)
                 .Include(p => p.Race)
+                .Include(p => p.PostsInterests)
+                    .ThenInclude(pi => pi.Interest)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -35,7 +37,7 @@ namespace SocialMediaBackend.Data
                     UserId = p.UserId,
                     Race = new Models.Race.Race
                     {
-                        Id = p.User.Race.Id,
+                        Id = p.User!.Race.Id,
                         Name = p.User.Race.Name,
                         ThemeColorHex = p.User.Race.ThemeColorHex,
                     },
@@ -57,6 +59,14 @@ namespace SocialMediaBackend.Data
                         DeletedAt = c.DeletedAt,
                         IsEdited = c.IsEdited,
                         EditedAt = c.EditedAt,
+                    }).ToList(),
+                    Interests = p.PostsInterests
+                    .Select(pi => new Models.Interest.Interest
+                    {
+                        Id = pi.Interest.Id,
+                        Name = pi.Interest.Name,
+                        Emoji = pi.Interest.Emoji,
+                        Color = pi.Interest.Color,
                     }).ToList()
                 })
                 .ToListAsync();

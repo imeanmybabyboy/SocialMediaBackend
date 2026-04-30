@@ -31,8 +31,8 @@ namespace SocialMediaBackend.Data
             string saltIvan = "3456789A";
             string ivanPassHash = kdfService.Dk("ivanRock", saltIvan);
 
-            return new[]
-            {
+            return
+            [
             new User
             {
                 Id = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"),
@@ -129,11 +129,11 @@ namespace SocialMediaBackend.Data
                 Salt = saltIvan,
                 RegisteredAt = new DateTime(2024, 01, 08)
             }
-            };
+            ];
         }
         public static UserRole[] UserRoles()
         {
-            return new[] {
+            return [
                 new UserRole
                 {
                     Id = Guid.Parse("A3F2E1B4-9C5D-4F2A-8D7A-1B2C3D4E5F6A"),
@@ -146,11 +146,11 @@ namespace SocialMediaBackend.Data
                     Title = "User",
                     Description = "Regular user role"
                 }
-            };
+            ];
         }
         public static Post[] Posts()
         {
-            return new[] {
+            return [
                 new Post
                 {
                     Id = Guid.Parse("A1111111-1111-1111-1111-111111111111"),
@@ -439,11 +439,11 @@ namespace SocialMediaBackend.Data
                     SharesQnt = 7,
                     CreatedAt = new DateTime(2026, 03, 01)
                 }
-            };
+            ];
         }
         public static Comment[] Comments()
         {
-            return new[] {
+            return [
                 new Comment
                 {
                     Id = Guid.Parse("E2222222-2222-2222-2222-222222222222"),
@@ -514,7 +514,7 @@ namespace SocialMediaBackend.Data
                     CreatedAt = new DateTime(2024, 02, 07),
                     IsEdited = false
                 }
-                };
+                ];
         }
         public static Race[] Races()
         {
@@ -538,8 +538,8 @@ namespace SocialMediaBackend.Data
         }
         public static Interest[] Interests()
         {
-            return new[]
-            {
+            return
+            [
                 new Interest { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Name = "Sports", Emoji = "⚽", Color = "#3b82ff" },
                 new Interest { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Name = "Books", Emoji = "📚", Color = "#8b5cf6" },
                 new Interest { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Name = "Movies", Emoji = "🎬", Color = "#ff3b3b" },
@@ -560,12 +560,12 @@ namespace SocialMediaBackend.Data
                 new Interest { Id = Guid.Parse("14141414-1414-1414-1414-141414141414"), Name = "Business", Emoji = "💼", Color = "#64748b" },
                 new Interest { Id = Guid.Parse("15151515-1515-1515-1515-151515151515"), Name = "Cars", Emoji = "🚗", Color = "#dc2626" },
                 new Interest { Id = Guid.Parse("16161616-1616-1616-1616-161616161616"), Name = "Space", Emoji = "🚀", Color = "#002f9dff" }
-            };
+            ];
         }
         public static UserInterest[] UsersInterests()
         {
-            return new[]
-            {
+            return
+            [
         new UserInterest { UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"), InterestId = Guid.Parse("11111111-1111-1111-1111-111111111111") }, // Sports
         new UserInterest { UserId = Guid.Parse("C1D2E3F4-5678-4ABC-9DEF-1234567890AB"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
 
@@ -589,7 +589,90 @@ namespace SocialMediaBackend.Data
 
                 new UserInterest { UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"), InterestId = Guid.Parse("15151515-1515-1515-1515-151515151515") }, // Cars
         new UserInterest { UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"), InterestId = Guid.Parse("16161616-1616-1616-1616-161616161616") }  // Space
-            };
+            ];
+        }
+        public static PostInterest[] PostsInterests()
+        {
+            return
+            [
+                new PostInterest { PostId = Guid.Parse("A1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+                new PostInterest { PostId = Guid.Parse("A1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("11111111-1111-1111-1111-111111111111") }, // Sports
+
+                new PostInterest { PostId = Guid.Parse("A2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+                new PostInterest { PostId = Guid.Parse("A2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
+
+                new PostInterest { PostId = Guid.Parse("A3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("33333333-3333-3333-3333-333333333333") }, // Movies
+                new PostInterest { PostId = Guid.Parse("A3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+
+                new PostInterest { PostId = Guid.Parse("A4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("55555555-5555-5555-5555-555555555555") }, // Gaming
+                new PostInterest { PostId = Guid.Parse("A4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("88888888-8888-8888-8888-888888888888") }, // Fitness
+
+                new PostInterest { PostId = Guid.Parse("A5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("99999999-9999-9999-9999-999999999999") }, // Anime
+                new PostInterest { PostId = Guid.Parse("A5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") }, // Art
+
+                new PostInterest { PostId = Guid.Parse("A6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa") }, // Technology
+                new PostInterest { PostId = Guid.Parse("A6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd") }, // Science
+
+                new PostInterest { PostId = Guid.Parse("A7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff") }, // Cooking
+                new PostInterest { PostId = Guid.Parse("A7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("12121212-1212-1212-1212-121212121212") }, // Nature
+
+                new PostInterest { PostId = Guid.Parse("A8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("15151515-1515-1515-1515-151515151515") }, // Cars
+                new PostInterest { PostId = Guid.Parse("A8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("16161616-1616-1616-1616-161616161616") }, // Space
+
+                new PostInterest { PostId = Guid.Parse("A9999999-9999-9999-9999-999999999999"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+                new PostInterest { PostId = Guid.Parse("A9999999-9999-9999-9999-999999999999"), InterestId = Guid.Parse("11111111-1111-1111-1111-111111111111") }, // Sports
+
+                new PostInterest { PostId = Guid.Parse("B1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+                new PostInterest { PostId = Guid.Parse("B1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+
+                new PostInterest { PostId = Guid.Parse("B2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff") }, // Cooking
+                new PostInterest { PostId = Guid.Parse("B2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("33333333-3333-3333-3333-333333333333") }, // Movies
+
+                new PostInterest { PostId = Guid.Parse("B3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("55555555-5555-5555-5555-555555555555") }, // Gaming
+                new PostInterest { PostId = Guid.Parse("B3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+
+                new PostInterest { PostId = Guid.Parse("B4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") }, // Art
+                new PostInterest { PostId = Guid.Parse("B4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("99999999-9999-9999-9999-999999999999") }, // Anime
+
+                new PostInterest { PostId = Guid.Parse("B5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("88888888-8888-8888-8888-888888888888") }, // Fitness
+                new PostInterest { PostId = Guid.Parse("B5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("55555555-5555-5555-5555-555555555555") }, // Gaming
+
+                new PostInterest { PostId = Guid.Parse("B6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+                new PostInterest { PostId = Guid.Parse("B6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff") }, // Cooking
+
+                new PostInterest { PostId = Guid.Parse("B7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("11111111-1111-1111-1111-111111111111") }, // Sports
+                new PostInterest { PostId = Guid.Parse("B7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("16161616-1616-1616-1616-161616161616") }, // Space
+
+                new PostInterest { PostId = Guid.Parse("B8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+                new PostInterest { PostId = Guid.Parse("B8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("14141414-1414-1414-1414-141414141414") }, // Business
+
+                new PostInterest { PostId = Guid.Parse("B9999999-9999-9999-9999-999999999999"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
+                new PostInterest { PostId = Guid.Parse("B9999999-9999-9999-9999-999999999999"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+
+                new PostInterest { PostId = Guid.Parse("C1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+                new PostInterest { PostId = Guid.Parse("C1111111-1111-1111-1111-111111111111"), InterestId = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee") }, // History
+
+                new PostInterest { PostId = Guid.Parse("C2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("55555555-5555-5555-5555-555555555555") }, // Gaming
+                new PostInterest { PostId = Guid.Parse("C2222222-2222-2222-2222-222222222222"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
+
+                new PostInterest { PostId = Guid.Parse("C3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+                new PostInterest { PostId = Guid.Parse("C3333333-3333-3333-3333-333333333333"), InterestId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb") }, // Art
+
+                new PostInterest { PostId = Guid.Parse("C4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("66666666-6666-6666-6666-666666666666") }, // Coding
+                new PostInterest { PostId = Guid.Parse("C4444444-4444-4444-4444-444444444444"), InterestId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd") }, // Science
+
+                new PostInterest { PostId = Guid.Parse("C5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff") }, // Cooking
+                new PostInterest { PostId = Guid.Parse("C5555555-5555-5555-5555-555555555555"), InterestId = Guid.Parse("22222222-2222-2222-2222-222222222222") }, // Books
+
+                new PostInterest { PostId = Guid.Parse("C6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("77777777-7777-7777-7777-777777777777") }, // Travel
+                new PostInterest { PostId = Guid.Parse("C6666666-6666-6666-6666-666666666666"), InterestId = Guid.Parse("12121212-1212-1212-1212-121212121212") }, // Nature
+
+                new PostInterest { PostId = Guid.Parse("C7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("13131313-1313-1313-1313-131313131313") }, // Psychology
+                new PostInterest { PostId = Guid.Parse("C7777777-7777-7777-7777-777777777777"), InterestId = Guid.Parse("14141414-1414-1414-1414-141414141414") }, // Business
+
+                new PostInterest { PostId = Guid.Parse("C8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc") }, // Photography
+                new PostInterest { PostId = Guid.Parse("C8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
+            ];
         }
     }
 }

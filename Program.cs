@@ -6,6 +6,7 @@ using ASP_PV411.Services.Salt;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data;
 using SocialMediaBackend.Services.AppService;
+using SocialMediaBackend.Services.BlobStorage;
 
 namespace SocialMediaBackend
 {
@@ -21,6 +22,7 @@ namespace SocialMediaBackend
             builder.Services.AddKdf();
             builder.Services.AddSalt();
             builder.Services.AddScoped<IAppService, AppService>();
+            builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 
             // Session
             builder.Services.AddDistributedMemoryCache();
@@ -82,6 +84,9 @@ namespace SocialMediaBackend
 
                     if (!dbContext.UsersInterests.Any())
                         dbContext.UsersInterests.AddRange(SeedData.UsersInterests());
+
+                    if (!dbContext.PostsInterests.Any())
+                        dbContext.PostsInterests.AddRange(SeedData.PostsInterests());
 
                     dbContext.SaveChanges();
                 }

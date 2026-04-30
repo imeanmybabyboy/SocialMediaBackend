@@ -17,5 +17,6 @@
         public Race? Race { get; set; } = null!;
 
         public List<Comment> Comments { get; set; } = [];
+        public List<PostInterest> PostsInterests { get; set; } = [];
     }
 }

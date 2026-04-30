@@ -5,13 +5,13 @@ using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Exceptions;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Models.User;
+using SocialMediaBackend.Services.BlobStorage;
 using System.Text;
 
 namespace SocialMediaBackend.Services.AppService
 {
-    public class AppService(DataAccessor dataAccessor, IKdfService kdfService, ISaltService saltService) : IAppService
+    public class AppService(DataAccessor dataAccessor, IKdfService kdfService, ISaltService saltService, IBlobStorageService blobStorageService) : IAppService
     {
-        private const string UnavailableHttpContextError = "HttpContext is not available";
         private const string MissingAuthorizationHeaderError = "Missing Authorization header";
         private const string InvalidAuthorizationSchemeError = "Invalid Authorization scheme";
         private const string CredentialsError = "Invalid or empty Credentials";
@@ -26,7 +26,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10)
         {
             RestStatus status = RestStatus.Ok;
-            List<Models.Post.Post> result = new();
+            List<Models.Post.Post> result = [];
 
             try
             {
@@ -236,6 +236,139 @@ namespace SocialMediaBackend.Services.AppService
             return user;
         }
 
+        //public async Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel)
+        //{
+        //    RestStatus status = RestStatus.Ok;
+        //    Models.User.UserSignInViewModel? result = null;
+
+        //    try
+        //    {
+        //        bool userByLoginExists = await dataAccessor.GetUserByLoginAsync(formModel.Login) != null;
+
+        //        if (userByLoginExists)
+        //            throw new UserException(UserExistsError);
+
+        //        bool userByEmailExists = await dataAccessor.GetUserByEmailAsync(formModel.Email) != null;
+
+        //        if (userByEmailExists)
+        //            throw new UserException(EmailExistsError);
+
+        //        string decoded;
+
+        //        try
+        //        {
+        //            decoded = Encoding.UTF8.GetString(Convert.FromBase64String(formModel.Base64Password));
+        //        }
+        //        catch
+        //        {
+        //            throw new InvalidBase64FormatException(InvalidBase64FormatError);
+        //        }
+
+        //        string[] parts = decoded.Split(':', 2);
+
+        //        if (parts.Length != 2)
+        //            throw new LoginPasswordException(LoginPasswordError);
+
+        //        string userPassword = parts[1];
+        //        string salt = saltService.GetSalt();
+        //        var race = await dataAccessor.GetRaceByNameAsync(formModel.Race);
+        //        var role = await dataAccessor.GetUserRoleAsync();
+
+        //        var user = new User
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            RaceId = race?.Id,
+        //            RoleId = role?.Id,
+        //            Login = formModel.Login,
+        //            Nickname = formModel.Nickname,
+        //            Email = formModel.Email,
+        //            ImageUrl = formModel.Avatar,
+        //            Salt = salt,
+        //            PasswordHash = kdfService.Dk(userPassword, salt),
+        //            RegisteredAt = DateTime.UtcNow,
+        //        };
+
+        //        await dataAccessor.AddUserAsync(user);
+
+        //        if (formModel.Interests != null && formModel.Interests.Any())
+        //        {
+        //            foreach (var interestName in formModel.Interests)
+        //            {
+        //                var interest = await dataAccessor.GetInterestByNameAsync(interestName);
+        //                if (interest != null)
+        //                {
+        //                    var userInterest = new UserInterest
+        //                    {
+        //                        UserId = user.Id,
+        //                        InterestId = interest.Id
+        //                    };
+
+        //                    await dataAccessor.AddUserInterestAsync(userInterest);
+        //                }
+        //            }
+        //        }
+
+        //        user = await dataAccessor.GetUserByLoginAsync(user.Login);
+
+        //        result = new UserSignInViewModel
+        //        {
+        //            Id = user!.Id,
+        //            Role = role?.Title,
+        //            Login = user.Login,
+        //            Nickname = user.Nickname,
+        //            Email = user.Email,
+        //            Bio = user.Bio,
+        //            ImageUrl = user.ImageUrl,
+        //            LastLoginAt = user.LastLoginAt,
+        //            RegisteredAt = user.RegisteredAt,
+        //            Interests = user.UserInterests
+        //                .Select(ui => new Models.Interest.Interest
+        //                {
+        //                    Id = ui.Interest.Id,
+        //                    Name = ui.Interest.Name,
+        //                    Emoji = ui.Interest.Emoji,
+        //                    Color = ui.Interest.Color
+        //                }).ToList()
+
+        //        };
+        //    }
+        //            catch (UserException ex)
+        //            {
+        //                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+        //    }
+        //            catch (InvalidBase64FormatException ex)
+        //            {
+        //                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+        //}
+        //            catch (LoginPasswordException ex)
+        //            {
+        //    status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+        //}
+        //            catch (Exception ex)
+        //            {
+        //    status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+        //}
+
+        //    var meta = new RestMeta
+        //    {
+        //        Service = "SocialMediaBackend",
+        //        Resource = "User",
+        //        Method = "POST",
+        //        Path = "/api/user/signup",
+        //        DataType = "application/json (object)",
+        //        ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        //        Cache = 0,
+        //        Links = new Dictionary<string, string> { { "self", "/api/user/signup" } }
+        //    };
+
+        //    return new RestResponse
+        //    {
+        //        Status = status,
+        //        Meta = meta,
+        //        Data = result
+        //    };
+        //}
+
         public async Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel)
         {
             RestStatus status = RestStatus.Ok;
@@ -270,20 +403,25 @@ namespace SocialMediaBackend.Services.AppService
                     throw new LoginPasswordException(LoginPasswordError);
 
                 string userPassword = parts[1];
-
                 string salt = saltService.GetSalt();
                 var race = await dataAccessor.GetRaceByNameAsync(formModel.Race);
                 var role = await dataAccessor.GetUserRoleAsync();
 
-                var user = new User
+                Guid userId = Guid.NewGuid();
+                string? imageUrl = null;
+
+                if (formModel.Avatar != null)
+                    imageUrl = await blobStorageService.UploadImageAsync(formModel.Avatar, userId);
+
+                var user = new Data.Entities.User
                 {
-                    Id = Guid.NewGuid(),
+                    Id = userId,
                     RaceId = race?.Id,
                     RoleId = role?.Id,
                     Login = formModel.Login,
                     Nickname = formModel.Nickname,
                     Email = formModel.Email,
-                    ImageUrl = formModel.AvatarUrl,
+                    ImageUrl = imageUrl,
                     Salt = salt,
                     PasswordHash = kdfService.Dk(userPassword, salt),
                     RegisteredAt = DateTime.UtcNow,
@@ -291,7 +429,7 @@ namespace SocialMediaBackend.Services.AppService
 
                 await dataAccessor.AddUserAsync(user);
 
-                if (formModel.Interests != null && formModel.Interests.Any())
+                if (formModel.Interests != null && formModel.Interests.Length != 0)
                 {
                     foreach (var interestName in formModel.Interests)
                     {
@@ -314,7 +452,7 @@ namespace SocialMediaBackend.Services.AppService
                 result = new UserSignInViewModel
                 {
                     Id = user!.Id,
-                    Role = role?.Title,
+                    Role = role!.Title,
                     Login = user.Login,
                     Nickname = user.Nickname,
                     Email = user.Email,
@@ -330,7 +468,6 @@ namespace SocialMediaBackend.Services.AppService
                             Emoji = ui.Interest.Emoji,
                             Color = ui.Interest.Color
                         }).ToList()
-
                 };
             }
             catch (UserException ex)
@@ -369,5 +506,6 @@ namespace SocialMediaBackend.Services.AppService
                 Data = result
             };
         }
+
     }
 }

@@ -18,7 +18,7 @@ namespace SocialMediaBackend.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<RestResponse> ApiSignUpAsync([FromBody] UserSignUpFormModel formModel)
+        public async Task<RestResponse> ApiSignUpAsync([FromForm] UserSignUpFormModel formModel)
         {
             var result = await appService.SignUpAsync(formModel);
 

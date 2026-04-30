@@ -5,7 +5,8 @@ namespace SocialMediaBackend.Models.User
     public class UserSignInViewModel
     {
         public Guid Id { get; set; }
-        public string? Role { get; set; }
+        public string Role { get; set; } = null!;
+        public string Race { get; set; } = null!;
         public string Login { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public string? Bio { get; set; }
