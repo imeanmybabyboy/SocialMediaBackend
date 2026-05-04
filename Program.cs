@@ -22,7 +22,8 @@ namespace SocialMediaBackend
             builder.Services.AddKdf();
             builder.Services.AddSalt();
             builder.Services.AddScoped<IAppService, AppService>();
-            builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
+            builder.Services.AddSingleton<AvatarStorageService>();
+            builder.Services.AddSingleton<PostImageStorageService>();
 
             // Session
             builder.Services.AddDistributedMemoryCache();

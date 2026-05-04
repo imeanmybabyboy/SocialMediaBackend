@@ -74,6 +74,34 @@ namespace SocialMediaBackend.Data
             return await posts;
         }
 
+        public async Task AddPostAsync(Entities.Post post)
+        {
+            await dataContext.Posts.AddAsync(post);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task AddPostInterestsAsync(List<PostInterest> postInterests)
+        {
+            await dataContext.PostsInterests.AddRangeAsync(postInterests);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task<Entities.Post?> GetPostByIdAsync(string id)
+        {
+            var post = dataContext
+                .Posts
+                .Include(p => p.Race)
+                .Include(p => p.Comments)
+                .Include(p => p.PostsInterests)
+                    .ThenInclude(pi => pi.Interest)
+                .FirstOrDefaultAsync(p => p.Id.ToString() == id);
+
+            if (post == null)
+                throw new Exception($"Post with id {id} not found");
+
+            return await post;
+        }
+
+
         public async Task<List<Models.Race.Race>> GetRacesAsync()
         {
             Task<List<Models.Race.Race>> raceTask = dataContext
@@ -88,6 +116,14 @@ namespace SocialMediaBackend.Data
                 .ToListAsync();
 
             return await raceTask;
+        }
+
+        public async Task<Entities.Race?> GetRaceByNameAsync(string raceName)
+        {
+            var race = dataContext
+                .Races
+                .FirstOrDefaultAsync(r => r.Name.Trim().ToLower() == raceName.Trim().ToLower());
+            return await race;
         }
 
         public async Task<List<Models.Interest.Interest>> GetInterestsAsync()
@@ -108,6 +144,16 @@ namespace SocialMediaBackend.Data
 
         }
 
+        public async Task<List<Entities.Interest>> GetInterestByNameAsync(string[] names)
+        {
+            var normalizedNames = names.Select(n => n.ToLower().Trim()).ToList();
+
+            return await dataContext.Interests
+                .Where(i => normalizedNames.Contains(i.Name.ToLower().Trim()))
+                .ToListAsync();
+        }
+
+
         public async Task<Entities.User?> GetUserByLoginAsync(string login)
         {
             var user = dataContext
@@ -116,16 +162,41 @@ namespace SocialMediaBackend.Data
                 .Include(u => u.UserInterests)
                     .ThenInclude(ui => ui.Interest)
                 .FirstOrDefaultAsync(u => u.Login.Trim() == login && u.DeletedAt == null);
+
             return await user;
         }
 
-        public async Task<Entities.Race?> GetRaceByNameAsync(string raceName)
+        public async Task<Entities.User?> GetUserByIdAsync(string id)
         {
-            var race = dataContext
-                .Races
-                .FirstOrDefaultAsync(r => r.Name.Trim().ToLower() == raceName.Trim().ToLower());
-            return await race;
+            var user = dataContext
+                .Users
+                .Include(u => u.Role)
+                .Include(u => u.UserInterests)
+                    .ThenInclude(ui => ui.Interest)
+                .FirstOrDefaultAsync(u => u.Id.ToString() == id && u.DeletedAt == null);
+
+            return await user;
         }
+        public async Task AddUserAsync(Entities.User user)
+        {
+            await dataContext.Users.AddAsync(user);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task AddUserInterestsAsync(List<UserInterest> userInterests)
+        {
+            await dataContext.UsersInterests.AddRangeAsync(userInterests);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task<Entities.User?> GetUserByEmailAsync(string email)
+        {
+            var user = dataContext
+                .Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email.Trim().ToUpper() == email.Trim().ToUpper() && u.DeletedAt == null);
+
+            return await user;
+        }
+
 
         public async Task<Entities.UserRole?> GetUserRoleAsync()
         {
@@ -145,32 +216,5 @@ namespace SocialMediaBackend.Data
             return await role;
         }
 
-        public async Task AddUserAsync(Entities.User user)
-        {
-            await dataContext.Users.AddAsync(user);
-            await dataContext.SaveChangesAsync();
-        }
-
-        public async Task<Entities.Interest?> GetInterestByNameAsync(string name)
-        {
-            return await dataContext.Interests
-                .FirstOrDefaultAsync(i => i.Name.ToLower().Trim() == name.ToLower().Trim());
-        }
-
-        public async Task AddUserInterestAsync(UserInterest userInterest)
-        {
-            //await dataContext.UsersInterests.AddAsync(userInterest);
-            await dataContext.SaveChangesAsync();
-        }
-
-        public async Task<Entities.User?> GetUserByEmailAsync(string email)
-        {
-            var user = dataContext
-                .Users
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Email.Trim().ToUpper() == email.Trim().ToUpper() && u.DeletedAt == null);
-
-            return await user;
-        }
     }
 }

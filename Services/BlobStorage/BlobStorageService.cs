@@ -1,35 +1,39 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using SocialMediaBackend.Exceptions;
 
 namespace SocialMediaBackend.Services.BlobStorage
 {
-    public class BlobStorageService : IBlobStorageService
+    public abstract class BlobStorageService
     {
-        private readonly BlobContainerClient containerClient;
+        protected readonly BlobContainerClient ContainerClient;
 
-        public BlobStorageService(IConfiguration config)
+        private static readonly HashSet<string> AllowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+        private static readonly HashSet<string> AllowedContentTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+        protected BlobStorageService(IConfiguration config)
         {
             string connectionString = config["AzureBlobStorage:ConnectionString"]!;
             string containerName = config["AzureBlobStorage:ContainerName"]!;
 
-            containerClient = new BlobContainerClient(connectionString, containerName);
-            containerClient.CreateIfNotExists(PublicAccessType.Blob);
+            ContainerClient = new BlobContainerClient(connectionString, containerName);
+            ContainerClient.CreateIfNotExists(PublicAccessType.Blob);
         }
 
-        public async Task<string> UploadImageAsync(IFormFile file, Guid userId)
+        protected static void ValidateImage(IFormFile file)
         {
-            string extension = Path.GetExtension(file.FileName);
-            string blobName = $"users/{userId}/avatar{extension}";
+            string extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+            if (!AllowedExtensions.Contains(extension))
+                throw new InvalidFileExtensionException($"The '{extension}' extension is not allowed. List of allowed extensions: {string.Join(", ", AllowedExtensions)}");
 
-            var uploadOptions = new BlobUploadOptions
-            {
-                HttpHeaders = new BlobHttpHeaders
-                {
-                    ContentType = file.ContentType
-                },
-            };
+            if (!AllowedContentTypes.Contains(file.ContentType))
+                throw new InvalidFileTypeException($"The '{file.ContentType}' file type is not allowed.");
+        }
+
+        protected async Task<string> UploadAsync(IFormFile file, string blobName)
+        {
+            BlobClient blobClient = ContainerClient.GetBlobClient(blobName);
 
             await blobClient.UploadAsync(file.OpenReadStream(), overwrite: true);
             await blobClient.SetHttpHeadersAsync(new BlobHttpHeaders
@@ -45,9 +49,8 @@ namespace SocialMediaBackend.Services.BlobStorage
             Uri uri = new(imageUrl);
             string blobName = string.Join("", uri.Segments[2..]);
 
-            BlobClient blobClient = containerClient.GetBlobClient(blobName);
+            BlobClient blobClient = ContainerClient.GetBlobClient(blobName);
             await blobClient.DeleteIfExistsAsync();
         }
-
     }
 }

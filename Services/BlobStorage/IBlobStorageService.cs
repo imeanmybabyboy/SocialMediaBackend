@@ -2,7 +2,7 @@
 {
     public interface IBlobStorageService
     {
-        Task<string> UploadImageAsync(IFormFile file, Guid userId);
+        Task<string> UploadImageAsync(IFormFile file, Guid entityId);
         Task DeleteImageAsync(string imageUrl);
     }
 }
