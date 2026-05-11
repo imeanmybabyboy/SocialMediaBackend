@@ -29,16 +29,18 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 
 ### HomeController:
 ```
-/api/home/ApiGetPostsAsync
+/api/home/posts
+/api/home/post/add
 ```
 
 ### ReferenceController:
 ```
-/api/reference/ApiGetAdditionalSignUpInfoAsync
+/api/reference/additionalSignUpInfo
 ```
 
 ### UserController:
 ```
-/api/user/ApiSignInAsync
-/api/user/ApiSignUpAsync
+/api/user/signin
+/api/user/signup
+/api/user/profile/edit
 ```
