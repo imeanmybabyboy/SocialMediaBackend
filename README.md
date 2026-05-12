@@ -30,7 +30,6 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 ### HomeController:
 ```
 /api/home/posts
-/api/home/post/add
 ```
 
 ### ReferenceController:
@@ -44,4 +43,14 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 /api/user/signup
 /api/user/profile/edit
 /api/user/users/find
+```
+
+### PostController:
+```
+/api/post/add
+```
+
+### CommentController:
+```
+/api/comment/add
 ```
