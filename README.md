@@ -43,5 +43,5 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 /api/user/signin
 /api/user/signup
 /api/user/profile/edit
-/api/users/find
+/api/user/users/find
 ```
