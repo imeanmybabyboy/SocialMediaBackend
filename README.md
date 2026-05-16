@@ -29,7 +29,8 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 
 ### HomeController:
 ```
-/api/home/posts
+/api/home/posts/{page?}/?pageSize={pageSize}
+/api/home/posts/private/{page?}/?pageSize={pageSize}
 ```
 
 ### ReferenceController:
@@ -48,6 +49,7 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 ### PostController:
 ```
 /api/post/add
+/api/post/getOwn/{userId}/{page?}/?pageSize={pageSize}
 ```
 
 ### CommentController:
