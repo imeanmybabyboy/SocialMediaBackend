@@ -41,18 +41,57 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 ### UserController:
 ```
 /api/user/signin
+headers: {
+Authentication: "Basic " + Base64Password
+}
+
 /api/user/signup
+body: {
+  string Login 
+  string Email 
+  string Base64Password 
+  string Nickname 
+  IFormFile? Avatar
+  string RaceId
+  string[] Interests
+}
+
 /api/user/profile/edit
-/api/user/users/find
+body: {
+  string UserId 
+  string? Login 
+  string? Nickname 
+  string? Bio 
+  string? Email 
+  IFormFile? Avatar 
+  string? OldBase64Password 
+  string? Base64Password 
+  string[]? Interests 
+}
+
+/api/user/users/find/{request} // request = user login or nickname
 ```
 
 ### PostController:
 ```
 /api/post/add
+body: {
+  string UserId
+  string Title
+  IFormFile? PostImage
+  string Bio
+  string[] Interests
+}
+
 /api/post/getOwn/{userId}/{page?}/?pageSize={pageSize}
 ```
 
 ### CommentController:
 ```
 /api/comment/add
+body: {
+  string UserId
+  string PostId
+  string Bio
+}
 ```
