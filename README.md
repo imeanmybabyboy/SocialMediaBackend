@@ -29,22 +29,28 @@ git clone https://github.com/imeanmybabyboy/SocialMediaBackend.git
 
 ### HomeController:
 ```
+Get all posts:
 /api/home/posts/{page?}/?pageSize={pageSize}
+
+Get private posts (only your race's posts)
 /api/home/posts/private/{page?}/?pageSize={pageSize}
 ```
 
 ### ReferenceController:
 ```
+Get additional sign up info (interests and races):
 /api/reference/additionalSignUpInfo
 ```
 
 ### UserController:
 ```
+Sign in:
 /api/user/signin
 headers: {
 Authentication: "Basic " + Base64Password
 }
 
+Sign up:
 /api/user/signup
 body: {
   string Login 
@@ -56,6 +62,7 @@ body: {
   string[] Interests
 }
 
+Edit profile:
 /api/user/profile/edit
 body: {
   string UserId 
@@ -69,11 +76,16 @@ body: {
   string[]? Interests 
 }
 
+Get user (list of users) preview by request (login or nickname)
 /api/user/users/find/{request} // request = user login or nickname
+
+Get user profile:
+/api/user/profile/{userId}
 ```
 
 ### PostController:
 ```
+Add post:
 /api/post/add
 body: {
   string UserId
@@ -83,11 +95,13 @@ body: {
   string[] Interests
 }
 
+Get your posts:
 /api/post/getOwn/{userId}/{page?}/?pageSize={pageSize}
 ```
 
 ### CommentController:
 ```
+Add comment:
 /api/comment/add
 body: {
   string UserId
