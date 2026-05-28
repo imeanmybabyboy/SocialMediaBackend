@@ -12,17 +12,36 @@ namespace SocialMediaBackend.Controllers
         [HttpPost("signin")]
         public async Task<RestResponse> ApiSignInAsync()
         {
-            var result = await appService.SignInAsync(Request.Headers.Authorization!);
-
-            return result;
+            var result = appService.SignInAsync(Request.Headers.Authorization!);
+            return await result;
         }
 
         [HttpPost("signup")]
         public async Task<RestResponse> ApiSignUpAsync([FromForm] UserSignUpFormModel formModel)
         {
-            var result = await appService.SignUpAsync(formModel);
+            var result = appService.SignUpAsync(formModel);
+            return await result;
+        }
 
-            return result;
+        [HttpPut("profile/edit")]
+        public async Task<RestResponse> ApiEditProfile([FromForm] UserEditProfileFormModel formModel)
+        {
+            var result = appService.EditProfileAsync(formModel);
+            return await result;
+        }
+
+        [HttpGet("users/find/{*request}")]
+        public async Task<RestResponse> ApiFindUser(string request)
+        {
+            var result = appService.FindUserAsync(request);
+            return await result;
+        }
+
+        [HttpGet("profile/{userId}")]
+        public async Task<RestResponse> ApiGetUserProfile(string userId)
+        {
+            var result = appService.GetUserProfileAsync(userId);
+            return await result;
         }
     }
 }

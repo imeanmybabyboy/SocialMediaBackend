@@ -10,18 +10,17 @@ namespace SocialMediaBackend.Controllers
     public class HomeController(IAppService appService) : ControllerBase
     {
         [HttpGet("posts/{page?}")]
-        public async Task<RestResponse> ApiGetPostsAsync(int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<RestResponse> ApiGetPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {
             var result = appService.GetPostsAsync(page, pageSize);
 
             return await result;
         }
 
-        [HttpPost("post/add")]
-        public async Task<RestResponse> ApiAddPostAsync([FromForm] PostAddFormModel formModel)
+        [HttpGet("posts/private/{page?}")]
+        public async Task<RestResponse> ApiGetPrivatePostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {
-            var result = appService.AddPostAsync(formModel);
-
+            var result = appService.GetPrivatePostsAsync(page, pageSize);
             return await result;
         }
     }

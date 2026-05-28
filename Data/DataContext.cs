@@ -16,7 +16,8 @@ namespace SocialMediaBackend.Data
         public DbSet<Entities.Interest> Interests { get; set; }
         public DbSet<Entities.UserInterest> UsersInterests { get; set; }
         public DbSet<Entities.PostInterest> PostsInterests { get; set; }
-
+        public DbSet<Entities.PostLike> PostLikes { get; set; }
+        public DbSet<Entities.CommentLike> CommentLikes { get; set; }
 
         public DataContext(DbContextOptions options, IKdfService kdfService) : base(options)
         {
@@ -27,14 +28,14 @@ namespace SocialMediaBackend.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
 
-            modelBuilder.Entity<User>().HasData(SeedData.Users(_kdfService));
-            modelBuilder.Entity<UserRole>().HasData(SeedData.UserRoles());
-            modelBuilder.Entity<Post>().HasData(SeedData.Posts());
-            modelBuilder.Entity<Comment>().HasData(SeedData.Comments());
-            modelBuilder.Entity<Race>().HasData(SeedData.Races());
-            modelBuilder.Entity<Interest>().HasData(SeedData.Interests());
-            modelBuilder.Entity<UserInterest>().HasData(SeedData.UsersInterests());
-            modelBuilder.Entity<PostInterest>().HasData(SeedData.PostsInterests());
+            //modelBuilder.Entity<User>().HasData(SeedData.Users(_kdfService));
+            //modelBuilder.Entity<UserRole>().HasData(SeedData.UserRoles());
+            //modelBuilder.Entity<Post>().HasData(SeedData.Posts());
+            //modelBuilder.Entity<Comment>().HasData(SeedData.Comments());
+            //modelBuilder.Entity<Race>().HasData(SeedData.Races());
+            //modelBuilder.Entity<Interest>().HasData(SeedData.Interests());
+            //modelBuilder.Entity<UserInterest>().HasData(SeedData.UsersInterests());
+            //modelBuilder.Entity<PostInterest>().HasData(SeedData.PostsInterests());
         }
     }
 }

@@ -23,6 +23,7 @@
         public List<Comment> Comments { get; set; } = [];
         public Race Race { get; set; } = null!;
         public List<UserInterest> UserInterests { get; set; } = [];
-
+        public List<PostLike> PostLikes { get; set; } = [];
+        public List<CommentLike> CommentLikes { get; set; } = [];
     }
 }

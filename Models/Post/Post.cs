@@ -12,7 +12,7 @@
         public int SharesQnt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public List<Comment.Comment> Comments { get; set; } = [];
+        public List<Comment.CommentViewModel> Comments { get; set; } = [];
         public List<Interest.Interest> Interests { get; set; } = [];
     }
 }

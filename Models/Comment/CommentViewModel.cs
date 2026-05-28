@@ -1,6 +1,6 @@
 ﻿namespace SocialMediaBackend.Models.Comment
 {
-    public class Comment
+    public class CommentViewModel
     {
         public Guid Id { get; set; }
         public Guid? UserId { get; set; }

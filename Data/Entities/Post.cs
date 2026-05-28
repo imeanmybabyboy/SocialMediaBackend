@@ -8,15 +8,17 @@
         public string Title { get; set; } = null!;
         public string? ImageUrl { get; set; } = null!;
         public string Bio { get; set; } = null!;
-        public int LikesQnt { get; set; }
         public int SharesQnt { get; set; }
+        public int LikesQnt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public bool IsPrivate { get; set; } = false;
 
         public User? User { get; set; } = null!;
         public Race? Race { get; set; } = null!;
 
         public List<Comment> Comments { get; set; } = [];
         public List<PostInterest> PostsInterests { get; set; } = [];
+        public List<PostLike> Likes { get; set; } = [];
     }
 }

@@ -17,7 +17,7 @@ namespace SocialMediaBackend.Data
 
     public class DataAccessor(DataContext dataContext)
     {
-        public async Task<List<Models.Post.Post>> GetPostsAsync(int page = 1, int pageSize = 10)
+        public async Task<List<Models.Post.Post>> GetPostsAsync(int page = 1, int pageSize = 5)
         {
             page = page < 1 ? 1 : page;
 
@@ -28,6 +28,7 @@ namespace SocialMediaBackend.Data
                 .Include(p => p.Race)
                 .Include(p => p.PostsInterests)
                     .ThenInclude(pi => pi.Interest)
+                .Where(p => !p.IsPrivate)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -44,17 +45,17 @@ namespace SocialMediaBackend.Data
                     Title = p.Title,
                     ImageUrl = p.ImageUrl,
                     Bio = p.Bio,
-                    LikesQnt = p.LikesQnt,
+                    //LikesQnt = p.LikesQnt,
                     SharesQnt = p.SharesQnt,
                     CreatedAt = p.CreatedAt,
                     DeletedAt = p.DeletedAt,
-                    Comments = p.Comments.Select(c => new Models.Comment.Comment
+                    Comments = p.Comments.Select(c => new Models.Comment.CommentViewModel
                     {
                         Id = c.Id,
                         UserId = c.UserId,
                         PostId = c.PostId,
                         Bio = c.Bio,
-                        LikesQnt = c.LikesQnt,
+                        //LikesQnt = c.LikesQnt,
                         CreatedAt = c.CreatedAt,
                         DeletedAt = c.DeletedAt,
                         IsEdited = c.IsEdited,
@@ -71,6 +72,119 @@ namespace SocialMediaBackend.Data
                 })
                 .ToListAsync();
 
+            return await posts;
+        }
+        public async Task<List<Models.Post.Post>> GetPrivatePostsAsync(int page = 1, int pageSize = 5)
+        {
+            page = page < 1 ? 1 : page;
+
+            Task<List<Models.Post.Post>> posts = dataContext
+                .Posts
+                .AsNoTracking()
+                .Include(p => p.Comments)
+                .Include(p => p.Race)
+                .Include(p => p.PostsInterests)
+                    .ThenInclude(pi => pi.Interest)
+                .Where(p => p.IsPrivate)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new Models.Post.Post
+                {
+                    Id = p.Id,
+                    UserId = p.UserId,
+                    Race = new Models.Race.Race
+                    {
+                        Id = p.User!.Race.Id,
+                        Name = p.User.Race.Name,
+                        ThemeColorHex = p.User.Race.ThemeColorHex,
+                    },
+                    Title = p.Title,
+                    ImageUrl = p.ImageUrl,
+                    Bio = p.Bio,
+                    //LikesQnt = p.LikesQnt,
+                    SharesQnt = p.SharesQnt,
+                    CreatedAt = p.CreatedAt,
+                    DeletedAt = p.DeletedAt,
+                    Comments = p.Comments.Select(c => new Models.Comment.CommentViewModel
+                    {
+                        Id = c.Id,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
+                        Bio = c.Bio,
+                        //LikesQnt = c.LikesQnt,
+                        CreatedAt = c.CreatedAt,
+                        DeletedAt = c.DeletedAt,
+                        IsEdited = c.IsEdited,
+                        EditedAt = c.EditedAt,
+                    }).ToList(),
+                    Interests = p.PostsInterests
+                    .Select(pi => new Models.Interest.Interest
+                    {
+                        Id = pi.Interest.Id,
+                        Name = pi.Interest.Name,
+                        Emoji = pi.Interest.Emoji,
+                        Color = pi.Interest.Color,
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return await posts;
+        }
+        public async Task<List<Models.Post.Post>> GetUsersPostsAsync(string userId, int page = 1, int pageSize = 5)
+        {
+            page = page < 1 ? 1 : page;
+
+            Task<List<Models.Post.Post>> posts = dataContext
+                .Posts
+                .AsNoTracking()
+                .Include(p => p.Comments)
+                .Include(p => p.Race)
+                .Include(p => p.PostsInterests)
+                    .ThenInclude(pi => pi.Interest)
+                .Where(p => p.UserId.ToString() == userId)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new Models.Post.Post
+                {
+                    Id = p.Id,
+                    UserId = p.UserId,
+                    Race = new Models.Race.Race
+                    {
+                        Id = p.User!.Race.Id,
+                        Name = p.User.Race.Name,
+                        ThemeColorHex = p.User.Race.ThemeColorHex,
+                    },
+                    Title = p.Title,
+                    ImageUrl = p.ImageUrl,
+                    Bio = p.Bio,
+                    //LikesQnt = p.LikesQnt,
+                    SharesQnt = p.SharesQnt,
+                    CreatedAt = p.CreatedAt,
+                    DeletedAt = p.DeletedAt,
+                    Comments = p.Comments.Select(c => new Models.Comment.CommentViewModel
+                    {
+                        Id = c.Id,
+                        UserId = c.UserId,
+                        PostId = c.PostId,
+                        Bio = c.Bio,
+                        //LikesQnt = c.LikesQnt,
+                        CreatedAt = c.CreatedAt,
+                        DeletedAt = c.DeletedAt,
+                        IsEdited = c.IsEdited,
+                        EditedAt = c.EditedAt,
+                    }).ToList(),
+                    Interests = p.PostsInterests
+                    .Select(pi => new Models.Interest.Interest
+                    {
+                        Id = pi.Interest.Id,
+                        Name = pi.Interest.Name,
+                        Emoji = pi.Interest.Emoji,
+                        Color = pi.Interest.Color,
+                    }).ToList()
+                })
+                .ToListAsync();
             return await posts;
         }
 
@@ -118,11 +232,11 @@ namespace SocialMediaBackend.Data
             return await raceTask;
         }
 
-        public async Task<Entities.Race?> GetRaceByNameAsync(string raceName)
+        public async Task<Entities.Race?> GetRaceByIdAsync(string id)
         {
             var race = dataContext
                 .Races
-                .FirstOrDefaultAsync(r => r.Name.Trim().ToLower() == raceName.Trim().ToLower());
+                .FirstOrDefaultAsync(r => r.Id.ToString().ToLower() == id.ToLower());
             return await race;
         }
 
@@ -144,13 +258,19 @@ namespace SocialMediaBackend.Data
 
         }
 
-        public async Task<List<Entities.Interest>> GetInterestByNameAsync(string[] names)
+        public async Task<List<Entities.Interest>> GetInterestByIdAsync(string[] ids)
         {
-            var normalizedNames = names.Select(n => n.ToLower().Trim()).ToList();
-
             return await dataContext.Interests
-                .Where(i => normalizedNames.Contains(i.Name.ToLower().Trim()))
+                .Where(i => ids.Contains(i.Id.ToString()))
                 .ToListAsync();
+        }
+        public async Task DeleteUserInterestsAsync(string userId)
+        {
+            var interests = dataContext
+                .UsersInterests
+                .Where(ui => ui.UserId.ToString() == userId);
+            dataContext.UsersInterests.RemoveRange(interests);
+            await dataContext.SaveChangesAsync();
         }
 
 
@@ -159,6 +279,7 @@ namespace SocialMediaBackend.Data
             var user = dataContext
                 .Users
                 .Include(u => u.Role)
+                .Include(u => u.Race)
                 .Include(u => u.UserInterests)
                     .ThenInclude(ui => ui.Interest)
                 .FirstOrDefaultAsync(u => u.Login.Trim() == login && u.DeletedAt == null);
@@ -171,10 +292,10 @@ namespace SocialMediaBackend.Data
             var user = dataContext
                 .Users
                 .Include(u => u.Role)
+                .Include(u => u.Race)
                 .Include(u => u.UserInterests)
                     .ThenInclude(ui => ui.Interest)
                 .FirstOrDefaultAsync(u => u.Id.ToString() == id && u.DeletedAt == null);
-
             return await user;
         }
         public async Task AddUserAsync(Entities.User user)
@@ -192,8 +313,27 @@ namespace SocialMediaBackend.Data
             var user = dataContext
                 .Users
                 .Include(u => u.Role)
+                .Include(u => u.Race)
                 .FirstOrDefaultAsync(u => u.Email.Trim().ToUpper() == email.Trim().ToUpper() && u.DeletedAt == null);
 
+            return await user;
+        }
+        public async Task UpdateUserAsync(Entities.User user)
+        {
+            dataContext.Users.Update(user);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task<List<Entities.User>> FindUserByLoginOrUsername(string request)
+        {
+            var normalizedRequest = request.ToLower().Trim();
+            var user = dataContext
+                .Users
+                .Include(u => u.Race)
+                .Include(u => u.UserInterests)
+                    .ThenInclude(ui => ui.Interest)
+                .Where(u => u.Login.ToLower().Contains(normalizedRequest) ||
+                       u.Nickname.ToLower().Contains(normalizedRequest))
+                .ToListAsync();
             return await user;
         }
 
@@ -216,5 +356,59 @@ namespace SocialMediaBackend.Data
             return await role;
         }
 
+        public async Task AddCommentAsync(Entities.Comment comment)
+        {
+            await dataContext.Comments.AddAsync(comment);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> PostLikeExistsAsync(string userId, string postId)
+        {
+            return await dataContext
+                .PostLikes
+                .AnyAsync(l => l.UserId == Guid.Parse(userId) && l.PostId == Guid.Parse(postId));
+        }
+
+        public async Task AddPostLikeAsync(Entities.PostLike like)
+        {
+            await dataContext.PostLikes.AddAsync(like);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task RemovePostLikeAsync(string userId, string postId)
+        {
+            var like = await dataContext.PostLikes
+                .FirstOrDefaultAsync(l => l.UserId == Guid.Parse(userId) && l.PostId == Guid.Parse(postId));
+
+            if (like is not null)
+            {
+                dataContext.PostLikes.Remove(like);
+                await dataContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> CommentLikeExistsAsync(string userId, string commentId)
+        {
+            return await dataContext.CommentLikes
+                .AnyAsync(l => l.UserId == Guid.Parse(userId) && l.CommentId == Guid.Parse(commentId));
+        }
+
+        public async Task AddCommentLikeAsync(Entities.CommentLike like)
+        {
+            await dataContext.CommentLikes.AddAsync(like);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveCommentLikeAsync(Guid userId, Guid commentId)
+        {
+            var like = await dataContext.CommentLikes
+                .FirstOrDefaultAsync(l => l.UserId == userId && l.CommentId == commentId);
+
+            if (like is not null)
+            {
+                dataContext.CommentLikes.Remove(like);
+                await dataContext.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace SocialMediaBackend
                 options.Cookie.IsEssential = true;
             });
 
-            string connectionString = builder.Configuration.GetConnectionString("SocialMediaDb") ?? throw new FileNotFoundException("Connection String Configuration: key not found: SocialMediaDb");
+            string connectionString = builder.Configuration.GetConnectionString("SocialMediaDatabase") ?? throw new FileNotFoundException("Connection String Configuration: key not found: SocialMediaDatabase");
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString, options =>
             {
                 options.EnableRetryOnFailure(
