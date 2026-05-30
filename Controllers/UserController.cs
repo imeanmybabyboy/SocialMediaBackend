@@ -37,10 +37,17 @@ namespace SocialMediaBackend.Controllers
             return await result;
         }
 
-        [HttpGet("profile/{userId}")]
-        public async Task<RestResponse> ApiGetUserProfile(string userId)
+        [HttpGet("profileById/{userId}")]
+        public async Task<RestResponse> ApiGetUserProfileById(string userId)
         {
-            var result = appService.GetUserProfileAsync(userId);
+            var result = appService.GetUserProfileByIdAsync(userId);
+            return await result;
+        }
+        
+        [HttpGet("profileByLogin/{userLogin}")]
+        public async Task<RestResponse> ApiGetUserProfileByLogin(string userLogin)
+        {
+            var result = appService.GetUserProfileByLoginAsync(userLogin);
             return await result;
         }
     }

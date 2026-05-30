@@ -20,7 +20,8 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> GetOwnPostsAsync(string userId, int page = 1, int pageSize = 5);
         public Task<RestResponse> TogglePostLikeAsync(LikeFormModel formModel);
         //public Task<RestResponse> ToggleCommentLikeAsync(LikeFormModel formModel);
-        public Task<RestResponse> GetUserProfileAsync(string userId);
+        public Task<RestResponse> GetUserProfileByIdAsync(string userId);
+        public Task<RestResponse> GetUserProfileByLoginAsync(string userId);
 
     }
 }

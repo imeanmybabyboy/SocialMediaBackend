@@ -952,7 +952,7 @@ namespace SocialMediaBackend.Services.AppService
             return new RestResponse { Status = status, Meta = meta, Data = null };
         }
 
-        public async Task<RestResponse> GetUserProfileAsync(string userId)
+        public async Task<RestResponse> GetUserProfileByIdAsync(string userId)
         {
             RestStatus status = RestStatus.Ok;
             Models.User.UserProfileViewModel? result = null;
@@ -1019,6 +1019,84 @@ namespace SocialMediaBackend.Services.AppService
                 Links = new Dictionary<string, string>
                 {
                     { "self", $"/api/user/profile/{userId}" },
+                }
+            };
+
+            return new RestResponse
+            {
+                Status = status,
+                Meta = meta,
+                Data = result
+            };
+        }
+
+        public async Task<RestResponse> GetUserProfileByLoginAsync(string userLogin)
+        {
+            RestStatus status = RestStatus.Ok;
+            Models.User.UserProfileViewModel? result = null;
+
+            try
+            {
+                var user = await dataAccessor.GetUserByLoginAsync(userLogin);
+                if (user is null)
+                {
+                    throw new UserException(UserNotFoundError);
+                }
+
+                result = new()
+                {
+                    Id = user.Id,
+                    Race = new Models.Race.Race
+                    {
+                        Id = user.Race.Id,
+                        Name = user.Race.Name,
+                        ThemeColorHex = user.Race.ThemeColorHex,
+                    },
+                    Login = user.Login,
+                    Nickname = user.Nickname,
+                    Bio = user.Bio,
+                    ImageUrl = user.ImageUrl,
+                    LastLoginAt = user.LastLoginAt,
+                    Interests = user.UserInterests
+                        .Select(ui => new Models.Interest.Interest
+                        {
+                            Id = ui.Interest.Id,
+                            Name = ui.Interest.Name,
+                            Emoji = ui.Interest.Emoji,
+                            Color = ui.Interest.Color
+                        }).ToList()
+                };
+            }
+            catch (UserException ex)
+            {
+                status = new RestStatus
+                {
+                    IsOk = false,
+                    Code = 404,
+                    Phrase = $"User not found"
+                };
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus
+                {
+                    IsOk = false,
+                    Code = 500,
+                    Phrase = $"Internal Server Error"
+                };
+            }
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "Users",
+                Method = "GET",
+                Path = $"/api/user/profile/{userLogin}",
+                DataType = "application/json (object)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string>
+                {
+                    { "self", $"/api/user/profile/{userLogin}" },
                 }
             };
 

@@ -282,7 +282,7 @@ namespace SocialMediaBackend.Data
                 .Include(u => u.Race)
                 .Include(u => u.UserInterests)
                     .ThenInclude(ui => ui.Interest)
-                .FirstOrDefaultAsync(u => u.Login.Trim() == login && u.DeletedAt == null);
+                .FirstOrDefaultAsync(u => u.Login.Trim().ToLower() == login.ToLower() && u.DeletedAt == null);
 
             return await user;
         }
@@ -336,7 +336,6 @@ namespace SocialMediaBackend.Data
                 .ToListAsync();
             return await user;
         }
-
 
         public async Task<Entities.UserRole?> GetUserRoleAsync()
         {
