@@ -79,8 +79,11 @@ body: {
 Get user (list of users) preview by request (login or nickname)
 /api/user/users/find/{request} // request = user login or nickname
 
-Get user profile:
-/api/user/profile/{userId}
+Get user profile by id:
+/api/user/profileById/{userId}
+
+Get user profile by login:
+/api/user/profileByLogin/{userLogin}
 ```
 
 ### PostController:
