@@ -17,10 +17,10 @@ namespace SocialMediaBackend.Controllers
             return await result;
         }
 
-        [HttpGet("getOwn/{userId}/{page?}")]
-        public async Task<RestResponse> ApiGetOwnPostsAsync([FromRoute] string userId, [FromRoute] int page = 1, [FromQuery] int pageSize = 5)
+        [HttpGet("getOwn/{page?}")]
+        public async Task<RestResponse> ApiGetOwnPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {
-            var result = appService.GetOwnPostsAsync(userId, page, pageSize);
+            var result = appService.GetOwnPostsAsync(page, pageSize);
             return await result;
         }
     }

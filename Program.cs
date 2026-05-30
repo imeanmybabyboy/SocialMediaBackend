@@ -5,6 +5,7 @@ using ASP_PV411.Services.Random;
 using ASP_PV411.Services.Salt;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data;
+using SocialMediaBackend.Middleware;
 using SocialMediaBackend.Services.AppService;
 using SocialMediaBackend.Services.BlobStorage;
 
@@ -24,6 +25,7 @@ namespace SocialMediaBackend
             builder.Services.AddScoped<IAppService, AppService>();
             builder.Services.AddSingleton<AvatarStorageService>();
             builder.Services.AddSingleton<PostImageStorageService>();
+            builder.Services.AddHttpContextAccessor();
 
             // Session
             builder.Services.AddDistributedMemoryCache();
@@ -98,12 +100,14 @@ namespace SocialMediaBackend
             {
                 app.MapOpenApi();
             }
-
+            app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors();
 
-            app.UseAuthorization();
             app.UseSession();
+            app.UseAuthSession();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); });
 
             app.MapControllers();
 

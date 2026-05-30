@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Services.AppService;
@@ -10,6 +11,7 @@ namespace SocialMediaBackend.Controllers
     public class HomeController(IAppService appService) : ControllerBase
     {
         [HttpGet("posts/{page?}")]
+        [AllowAnonymous]
         public async Task<RestResponse> ApiGetPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {
             var result = appService.GetPostsAsync(page, pageSize);

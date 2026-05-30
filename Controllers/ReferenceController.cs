@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Services.AppService;
 
@@ -9,6 +10,7 @@ namespace SocialMediaBackend.Controllers
     public class ReferenceController(IAppService appService) : ControllerBase
     {
         [HttpGet("additionalSignUpInfo/")]
+        [AllowAnonymous]
         public async Task<RestResponse> ApiGetAdditionalSignUpInfoAsync()
         {
             return await appService.GetAdditionalSignUpInfoAsync();

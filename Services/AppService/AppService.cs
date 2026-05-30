@@ -1,8 +1,10 @@
 ﻿using ASP_PV411.Services.Kdf;
 using ASP_PV411.Services.Salt;
+using Microsoft.AspNetCore.Authorization;
 using SocialMediaBackend.Data;
 using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Exceptions;
+using SocialMediaBackend.Middleware;
 using SocialMediaBackend.Models.Comment;
 using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Race;
@@ -17,7 +19,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SocialMediaBackend.Services.AppService
 {
-    public class AppService(DataAccessor dataAccessor, IKdfService kdfService, ISaltService saltService, AvatarStorageService avatarStorageService, PostImageStorageService postStorageService) : IAppService
+    public class AppService(DataAccessor dataAccessor, IKdfService kdfService, ISaltService saltService, AvatarStorageService avatarStorageService, PostImageStorageService postStorageService, IHttpContextAccessor httpContextAccessor) : IAppService
     {
         private const string MissingAuthorizationHeaderError = "Missing Authorization header";
         private const string InvalidAuthorizationSchemeError = "Invalid Authorization scheme";
@@ -33,10 +35,17 @@ namespace SocialMediaBackend.Services.AppService
         private const string InvalidEmailFormatError = "Invalid email format";
         private const string OldPasswordRequiredError = "Old password is required to change password";
         private const string IncorrectPasswordError = "Password is incorrect";
-        private const string UserIdEmptyError = "Field UserId cannot be empty";
         private const string PostIdEmptyError = "Field PostId cannot be empty";
         private const string BioEmptyError = "Field Bio cannot be empty";
         private const string PostNotFoundError = "Post not found";
+        private const string AlreadySignedInError = "Already signed in";
+        private const string AlreadySignedOutError = "Already signed out";
+        private const string ErrorWhileSigningUp = "An error occurred while signing up";
+        private const string ErrorWhileGettingAdditionalInfo = "An error occurred while getting additional sign up info";
+        private const string ErrorWhileRetrievingPosts = "An error occurred while retrieving posts";
+        private const string ErrorWhileFindingUser = "An error occurred while finding a user";
+        private const string ErrorWhileGettingUserInfo = "An error occurred while getting user info";
+        private const string UnauthorizedActionError = "You must be logged in to perform an authorized action";
 
         public async Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10)
         {
@@ -47,13 +56,13 @@ namespace SocialMediaBackend.Services.AppService
             {
                 result = await dataAccessor.GetPostsAsync(page, pageSize);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = new RestStatus
                 {
                     IsOk = false,
                     Code = 500,
-                    Phrase = $"Internal Server Error: {ex.Message}"
+                    Phrase = ErrorWhileRetrievingPosts
                 };
             }
 
@@ -92,13 +101,13 @@ namespace SocialMediaBackend.Services.AppService
                 result.Races = await dataAccessor.GetRacesAsync();
                 result.Interests = await dataAccessor.GetInterestsAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = new RestStatus
                 {
                     IsOk = false,
                     Code = 500,
-                    Phrase = $"Internal Server Error: {ex.Message}"
+                    Phrase = ErrorWhileGettingAdditionalInfo
                 };
             }
 
@@ -132,7 +141,14 @@ namespace SocialMediaBackend.Services.AppService
 
             try
             {
-                var user = await _authenticateAsync(authHeader);
+                if (!string.IsNullOrWhiteSpace(sessionUserId()))
+                {
+                    throw new Exception(AlreadySignedInError);
+                }
+
+                var user = await authenticateAsync(authHeader);
+
+                AuthSessionMiddleware.SaveAuth(httpContextAccessor.HttpContext!, user);
 
                 result = new()
                 {
@@ -184,7 +200,7 @@ namespace SocialMediaBackend.Services.AppService
             }
             catch (Exception ex)
             {
-                status = new RestStatus { IsOk = false, Code = 500, Phrase = $"Internal Server Error: {ex.Message}" };
+                status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
             var meta = new RestMeta
@@ -210,7 +226,40 @@ namespace SocialMediaBackend.Services.AppService
             };
         }
 
-        private async Task<User> _authenticateAsync(string authHeader)
+        public RestResponse SignOut()
+        {
+            RestStatus status = RestStatus.Ok;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(sessionUserId()))
+                {
+                    throw new Exception(AlreadySignedOutError);
+                }
+
+                AuthSessionMiddleware.Logout(httpContextAccessor.HttpContext!);
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "User",
+                Method = "POST",
+                Path = "/api/user/signout",
+                DataType = "application/json (object)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", "/api/user/signout" } }
+            };
+
+            return new RestResponse { Status = status, Meta = meta, Data = null };
+        }
+
+        private async Task<User> authenticateAsync(string authHeader)
         {
             if (string.IsNullOrEmpty(authHeader))
             {
@@ -256,6 +305,8 @@ namespace SocialMediaBackend.Services.AppService
 
             return user;
         }
+
+        private string? sessionUserId() => httpContextAccessor.HttpContext!.User.FindFirst(System.Security.Claims.ClaimTypes.Sid)?.Value;
 
         public async Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel)
         {
@@ -324,7 +375,6 @@ namespace SocialMediaBackend.Services.AppService
                 {
                     if (imageUrl != null)
                         await avatarStorageService.DeleteImageAsync(imageUrl);
-                    throw;
                 }
 
                 if (formModel.Interests != null && formModel.Interests.Length != 0)
@@ -341,6 +391,8 @@ namespace SocialMediaBackend.Services.AppService
                 }
 
                 user = await dataAccessor.GetUserByLoginAsync(user.Login);
+
+                AuthSessionMiddleware.SaveAuth(httpContextAccessor.HttpContext!, user!);
 
                 result = new UserProfileViewModel
                 {
@@ -369,9 +421,9 @@ namespace SocialMediaBackend.Services.AppService
                         }).ToList()
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ErrorWhileSigningUp };
             }
 
             var meta = new RestMeta
@@ -407,7 +459,11 @@ namespace SocialMediaBackend.Services.AppService
                 if (formModel.PostImage != null)
                     imageUrl = await postStorageService.UploadImageAsync(formModel.PostImage, postId);
 
-                var user = await dataAccessor.GetUserByIdAsync(formModel.UserId);
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                var user = await dataAccessor.GetUserByIdAsync(userId);
 
                 if (user == null)
                     throw new UserException(UserNotFoundError);
@@ -522,7 +578,11 @@ namespace SocialMediaBackend.Services.AppService
 
             try
             {
-                var user = await dataAccessor.GetUserByIdAsync(formModel.UserId);
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                var user = await dataAccessor.GetUserByIdAsync(userId);
 
                 if (user == null)
                     throw new UserException(UserNotFoundError);
@@ -706,9 +766,9 @@ namespace SocialMediaBackend.Services.AppService
                         }).ToList()
                 }).ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
+                status = new RestStatus { IsOk = false, Code = 500, Phrase = ErrorWhileFindingUser };
             }
 
             var meta = new RestMeta
@@ -741,16 +801,17 @@ namespace SocialMediaBackend.Services.AppService
 
             try
             {
-                if (string.IsNullOrWhiteSpace(formModel.UserId))
-                    throw new Exception(UserIdEmptyError);
-
                 if (string.IsNullOrWhiteSpace(formModel.PostId))
                     throw new Exception(PostIdEmptyError);
 
                 if (string.IsNullOrWhiteSpace(formModel.Bio))
                     throw new Exception(BioEmptyError);
 
-                var user = await dataAccessor.GetUserByIdAsync(formModel.UserId);
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                var user = await dataAccessor.GetUserByIdAsync(userId);
                 if (user is null)
                     throw new UserException(UserNotFoundError);
 
@@ -761,7 +822,7 @@ namespace SocialMediaBackend.Services.AppService
                 var comment = new Data.Entities.Comment
                 {
                     Id = Guid.NewGuid(),
-                    UserId = Guid.Parse(formModel.UserId),
+                    UserId = Guid.Parse(userId),
                     PostId = Guid.Parse(formModel.PostId),
                     Bio = formModel.Bio,
                     LikesQnt = 0,
@@ -809,10 +870,13 @@ namespace SocialMediaBackend.Services.AppService
             };
         }
 
-        public async Task<RestResponse> GetOwnPostsAsync(string userId, int page = 1, int pageSize = 5)
+        public async Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5)
         {
             RestStatus status = RestStatus.Ok;
             List<Models.Post.Post> result = [];
+            var userId = sessionUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new UnauthorizedAccessException(UnauthorizedActionError);
 
             try
             {
@@ -858,13 +922,13 @@ namespace SocialMediaBackend.Services.AppService
             {
                 result = await dataAccessor.GetPrivatePostsAsync(page, pageSize);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = new RestStatus
                 {
                     IsOk = false,
                     Code = 500,
-                    Phrase = $"Internal Server Error"
+                    Phrase = ErrorWhileRetrievingPosts
                 };
             }
 
@@ -893,28 +957,27 @@ namespace SocialMediaBackend.Services.AppService
             };
         }
 
-        public async Task<RestResponse> TogglePostLikeAsync(Models.Like.LikeFormModel formModel)
+        public async Task<RestResponse> TogglePostLikeAsync(string postId)
         {
             RestStatus status = RestStatus.Ok;
 
             try
             {
-                if (string.IsNullOrWhiteSpace(formModel.UserId))
-                    throw new Exception(UserIdEmptyError);
-
-                if (string.IsNullOrWhiteSpace(formModel.TargetId))
+                if (string.IsNullOrWhiteSpace(postId))
                     throw new Exception(PostIdEmptyError);
 
-                var user = await dataAccessor.GetUserByIdAsync(formModel.UserId);
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                var user = await dataAccessor.GetUserByIdAsync(userId);
                 if (user is null)
                     throw new UserException(UserNotFoundError);
 
-                var post = await dataAccessor.GetPostByIdAsync(formModel.TargetId);
+                var post = await dataAccessor.GetPostByIdAsync(postId);
                 if (post is null)
                     throw new PostException(PostNotFoundError);
 
-                var userId = formModel.UserId;
-                var postId = formModel.TargetId;
                 bool alreadyLiked = await dataAccessor.PostLikeExistsAsync(userId, postId);
 
                 if (alreadyLiked)
@@ -995,16 +1058,16 @@ namespace SocialMediaBackend.Services.AppService
                 {
                     IsOk = false,
                     Code = 404,
-                    Phrase = $"User not found"
+                    Phrase = ex.Message
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = new RestStatus
                 {
                     IsOk = false,
                     Code = 500,
-                    Phrase = $"Internal Server Error"
+                    Phrase = ErrorWhileGettingUserInfo
                 };
             }
             var meta = new RestMeta
@@ -1073,16 +1136,16 @@ namespace SocialMediaBackend.Services.AppService
                 {
                     IsOk = false,
                     Code = 404,
-                    Phrase = $"User not found"
+                    Phrase = ex.Message
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 status = new RestStatus
                 {
                     IsOk = false,
                     Code = 500,
-                    Phrase = $"Internal Server Error"
+                    Phrase = ErrorWhileGettingUserInfo
                 };
             }
             var meta = new RestMeta

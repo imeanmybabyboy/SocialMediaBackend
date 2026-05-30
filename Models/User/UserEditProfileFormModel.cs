@@ -2,7 +2,6 @@
 {
     public class UserEditProfileFormModel
     {
-        public string UserId { get; set; } = null!;
         public string? Login { get; set; }
         public string? Nickname { get; set; }
         public string? Bio { get; set; }
