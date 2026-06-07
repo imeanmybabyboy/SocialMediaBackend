@@ -65,7 +65,6 @@ body: {
 Edit profile:
 /api/user/profile/edit
 body: {
-  string UserId 
   string? Login 
   string? Nickname 
   string? Bio 
@@ -91,7 +90,6 @@ Get user profile by login:
 Add post:
 /api/post/add
 body: {
-  string UserId
   string Title
   IFormFile? PostImage
   string Bio
@@ -99,7 +97,7 @@ body: {
 }
 
 Get your posts:
-/api/post/getOwn/{userId}/{page?}/?pageSize={pageSize}
+/api/post/getOwn//{page?}/?pageSize={pageSize}
 ```
 
 ### CommentController:
@@ -107,7 +105,6 @@ Get your posts:
 Add comment:
 /api/comment/add
 body: {
-  string UserId
   string PostId
   string Bio
 }
