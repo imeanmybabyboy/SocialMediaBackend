@@ -158,8 +158,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Welcome Post",
                     Bio = "This is the very first post in the system.",
-                    LikesQnt = 10,
-                    SharesQnt = 2,
                     CreatedAt = new DateTime(2026, 03, 01),
                     IsPrivate = false
                 },
@@ -170,8 +168,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "Daily Thoughts",
                     Bio = "Sharing some daily reflections.",
-                    LikesQnt = 5,
-                    SharesQnt = 1,
                     CreatedAt = new DateTime(2026, 03, 01),
                     IsPrivate = false
                 },
@@ -182,8 +178,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "Maria’s First Post",
                     Bio = "Hello everyone, glad to join!",
-                    LikesQnt = 7,
-                    SharesQnt = 0,
                     CreatedAt = new DateTime(2026, 03, 01),
                     IsPrivate = false
                 },
@@ -194,8 +188,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Alex’s Update",
                     Bio = "Quick update from Alex.",
-                    LikesQnt = 3,
-                    SharesQnt = 1,
                     CreatedAt = new DateTime(2026, 03, 03),
                     IsPrivate = false
                 },
@@ -206,8 +198,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Sofia’s Post",
                     Bio = "Excited to share my first post.",
-                    LikesQnt = 12,
-                    SharesQnt = 4,
                     CreatedAt = new DateTime(2026, 02, 01),
                     IsPrivate = false
                 },
@@ -218,8 +208,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000006"),
                     Title = "Mike’s Thoughts",
                     Bio = "Mike shares his ideas.",
-                    LikesQnt = 8,
-                    SharesQnt = 2,
                     CreatedAt = new DateTime(2026, 03, 02),
                     IsPrivate = false
                 },
@@ -230,8 +218,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                     Title = "Olga’s Story",
                     Bio = "Olga writes about her day.",
-                    LikesQnt = 15,
-                    SharesQnt = 5,
                     CreatedAt = new DateTime(2026, 03, 03),
                     IsPrivate = false
                 },
@@ -242,8 +228,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                     Title = "Ivan’s Rock",
                     Bio = "Ivan shares his music journey.",
-                    LikesQnt = 20,
-                    SharesQnt = 7,
                     CreatedAt = new DateTime(2026, 03, 04),
                     IsPrivate = false
                 },
@@ -254,8 +238,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Admin’s Announcement",
                     Bio = "Important system update.",
-                    LikesQnt = 30,
-                    SharesQnt = 10,
                     CreatedAt = new DateTime(2026, 03, 05),
                     IsPrivate = false
                 },
@@ -266,8 +248,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "John’s Travel",
                     Bio = "Sharing my travel experience.",
-                    LikesQnt = 18,
-                    SharesQnt = 6,
                     CreatedAt = new DateTime(2026, 03, 03),
                     IsPrivate = false
                 },
@@ -278,8 +258,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "Maria’s Recipe",
                     Bio = "Cooking tips and tricks.",
-                    LikesQnt = 25,
-                    SharesQnt = 9,
                     CreatedAt = new DateTime(2026, 03, 04),
                     IsPrivate = false
                 },
@@ -290,8 +268,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Alex’s Coding",
                     Bio = "Alex shares coding tips.",
-                    LikesQnt = 14,
-                    SharesQnt = 3,
                     CreatedAt = new DateTime(2026, 03, 06),
                     IsPrivate = false
                 },
@@ -302,8 +278,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Sofia’s Art",
                     Bio = "My latest painting.",
-                    LikesQnt = 22,
-                    SharesQnt = 8,
                     CreatedAt = new DateTime(2026, 03, 07),
                     IsPrivate = false
                 },
@@ -314,8 +288,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                     Title = "Mike’s Fitness",
                     Bio = "Workout routines.",
-                    LikesQnt = 16,
-                    SharesQnt = 5,
                     CreatedAt = new DateTime(2026, 03, 08),
                     IsPrivate = false
                 },
@@ -326,8 +298,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                     Title = "Olga’s Book Review",
                     Bio = "Reviewing my favorite book.",
-                    LikesQnt = 19,
-                    SharesQnt = 7,
                     CreatedAt = new DateTime(2026, 03, 08),
                     IsPrivate = false
                 },
@@ -338,8 +308,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Ivan’s Sports",
                     Bio = "Football match highlights.",
-                    LikesQnt = 28,
-                    SharesQnt = 11,
                     CreatedAt = new DateTime(2026, 03, 09),
                     IsPrivate = false
                 },
@@ -350,8 +318,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Admin’s Tips",
                     Bio = "System usage tips.",
-                    LikesQnt = 12,
-                    SharesQnt = 4,
                     CreatedAt = new DateTime(2026, 03, 10),
                     IsPrivate = false
                 },
@@ -362,8 +328,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "John’s Music",
                     Bio = "Sharing my playlist.",
-                    LikesQnt = 21,
-                    SharesQnt = 8,
                     CreatedAt = new DateTime(2026, 03, 09),
                     IsPrivate = false
                 },
@@ -374,8 +338,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000004"),
                     Title = "Maria’s Travel",
                     Bio = "Trip to the mountains.",
-                    LikesQnt = 17,
-                    SharesQnt = 6,
                     CreatedAt = new DateTime(2026, 03, 10),
                     IsPrivate = false
                 },
@@ -386,8 +348,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000005"),
                     Title = "Alex’s Gaming",
                     Bio = "Latest game review.",
-                    LikesQnt = 24,
-                    SharesQnt = 9,
                     CreatedAt = new DateTime(2026, 03, 11),
                     IsPrivate = false
                 },
@@ -398,8 +358,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000006"),
                     Title = "Sofia’s Travel",
                     Bio = "Trip to the seaside.",
-                    LikesQnt = 13,
-                    SharesQnt = 4,
                     CreatedAt = new DateTime(2026, 03, 12),
                     IsPrivate = false
                 },
@@ -410,8 +368,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000007"),
                     Title = "Mike’s Coding Journey",
                     Bio = "Learning C# step by step.",
-                    LikesQnt = 9,
-                    SharesQnt = 3,
                     CreatedAt = new DateTime(2026, 03, 04),
                     IsPrivate = false
                 },
@@ -422,8 +378,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000008"),
                     Title = "Olga’s Cooking",
                     Bio = "My favorite recipes.",
-                    LikesQnt = 27,
-                    SharesQnt = 12,
                     CreatedAt = new DateTime(2026, 03, 05),
                     IsPrivate = false
                 },
@@ -434,8 +388,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000001"),
                     Title = "Ivan’s Hiking",
                     Bio = "Exploring the forest trails.",
-                    LikesQnt = 19,
-                    SharesQnt = 6,
                     CreatedAt = new DateTime(2026, 03, 06),
                     IsPrivate = false
                 },
@@ -446,8 +398,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000002"),
                     Title = "Admin’s Security Tips",
                     Bio = "How to keep your account safe.",
-                    LikesQnt = 33,
-                    SharesQnt = 14,
                     CreatedAt = new DateTime(2026, 03, 12),
                     IsPrivate = false
                 },
@@ -458,8 +408,6 @@ namespace SocialMediaBackend.Data
                     RaceId = Guid.Parse("10000000-0000-0000-0000-000000000003"),
                     Title = "John’s Photography",
                     Bio = "Capturing the sunset.",
-                    LikesQnt = 22,
-                    SharesQnt = 7,
                     CreatedAt = new DateTime(2026, 03, 01),
                     IsPrivate = false
                 }
@@ -474,7 +422,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("D2E3F4A5-6789-4BCD-8EFA-2345678901BC"), // John
                     PostId = Guid.Parse("A1111111-1111-1111-1111-111111111111"), // Welcome Post
                     Bio = "Great introduction, looking forward to more posts!",
-                    LikesQnt = 4,
                     CreatedAt = new DateTime(2024, 02, 01),
                     IsEdited = false
                 },
@@ -484,7 +431,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("E3F4A5B6-7890-4CDE-9FAB-3456789012CD"), // Maria
                     PostId = Guid.Parse("A2222222-2222-2222-2222-222222222222"), // Daily Thoughts
                     Bio = "Nice reflections, John. Keep sharing!",
-                    LikesQnt = 2,
                     CreatedAt = new DateTime(2024, 02, 02),
                     IsEdited = false
                 },
@@ -494,7 +440,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("F4A5B6C7-8901-4DEF-9ABC-4567890123DE"), // Alex
                     PostId = Guid.Parse("A3333333-3333-3333-3333-333333333333"), // Maria’s First Post
                     Bio = "Welcome Maria! Glad to see your first post.",
-                    LikesQnt = 5,
                     CreatedAt = new DateTime(2024, 02, 03),
                     IsEdited = false
                 },
@@ -504,7 +449,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("01234567-89AB-4CDE-9F01-234567890ABC"), // Sofia
                     PostId = Guid.Parse("A4444444-4444-4444-4444-444444444444"), // Alex’s Update
                     Bio = "Thanks for the update, Alex!",
-                    LikesQnt = 3,
                     CreatedAt = new DateTime(2024, 02, 04),
                     IsEdited = false
                 },
@@ -514,7 +458,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("12345678-9ABC-4DEF-9012-345678901BCD"), // Mike
                     PostId = Guid.Parse("A5555555-5555-5555-5555-555555555555"), // Sofia’s Post
                     Bio = "Nice post, Sofia! Looking forward to more.",
-                    LikesQnt = 6,
                     CreatedAt = new DateTime(2024, 02, 05),
                     IsEdited = false
                 },
@@ -524,7 +467,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("23456789-ABCD-4EF0-9123-45678901CDEF"), // Olga
                     PostId = Guid.Parse("A6666666-6666-6666-6666-666666666666"), // Mike’s Thoughts
                     Bio = "Interesting ideas, Mike!",
-                    LikesQnt = 1,
                     CreatedAt = new DateTime(2024, 02, 06),
                     IsEdited = false
                 },
@@ -534,7 +476,6 @@ namespace SocialMediaBackend.Data
                     UserId = Guid.Parse("3456789A-BCDE-4F01-9234-5678901DEF01"), // Ivan
                     PostId = Guid.Parse("A7777777-7777-7777-7777-777777777777"), // Olga’s Story
                     Bio = "Nice story, Olga!",
-                    LikesQnt = 7,
                     CreatedAt = new DateTime(2024, 02, 07),
                     IsEdited = false
                 }
@@ -697,6 +638,30 @@ namespace SocialMediaBackend.Data
                 new PostInterest { PostId = Guid.Parse("C8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc") }, // Photography
                 new PostInterest { PostId = Guid.Parse("C8888888-8888-8888-8888-888888888888"), InterestId = Guid.Parse("44444444-4444-4444-4444-444444444444") }, // Music
             ];
+        }
+        public static PostLike[] PostsLikes(User[] users, Post[] posts)
+        {
+            var random = new Random();
+            var postLikesList = new List<PostLike>();
+
+            foreach(var user in users)
+            {
+                int likesCount = random.Next(0, posts.Length + 1);
+                if (likesCount == 0) continue;
+                var shuffledPosts = posts.OrderBy(_ => random.Next()).Take(likesCount);
+
+                foreach (var post in shuffledPosts)
+                {
+                    postLikesList.Add(new PostLike
+                    {
+                        UserId = user.Id,
+                        PostId = post.Id,
+                        CreatedAt = DateTime.UtcNow.AddDays(-random.Next(0, 30))
+                    });
+                }
+            }
+
+            return postLikesList.ToArray();
         }
     }
 }

@@ -5,6 +5,7 @@ using ASP_PV411.Services.Random;
 using ASP_PV411.Services.Salt;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data;
+using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Middleware;
 using SocialMediaBackend.Services.AppService;
 using SocialMediaBackend.Services.BlobStorage;
@@ -35,6 +36,8 @@ namespace SocialMediaBackend
                 options.IdleTimeout = TimeSpan.FromMinutes(15);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             string connectionString = builder.Configuration.GetConnectionString("SocialMediaDatabase") ?? throw new FileNotFoundException("Connection String Configuration: key not found: SocialMediaDatabase");
@@ -51,6 +54,7 @@ namespace SocialMediaBackend
                     policy.WithOrigins("http://localhost:5173")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
+                    .AllowCredentials()
                 ));
             builder.Services.AddScoped<DataAccessor>();
 
@@ -92,6 +96,20 @@ namespace SocialMediaBackend
                         dbContext.PostsInterests.AddRange(SeedData.PostsInterests());
 
                     dbContext.SaveChanges();
+
+                    var dbUsers = dbContext.Users.ToArray();
+                    var dbPosts = dbContext.Posts.ToArray();
+
+                    if (dbUsers.Length > 0 &&  dbPosts.Length > 0)
+                    {
+                        if (!dbContext.Set<PostLike>().Any())
+                        {
+                            var generatedLikes = SeedData.PostsLikes(dbUsers, dbPosts);
+                            dbContext.Set<PostLike>().AddRange(generatedLikes);
+
+                            dbContext.SaveChanges();
+                        }
+                    }
                 }
             }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Models.User;
@@ -33,7 +34,7 @@ namespace SocialMediaBackend.Controllers
         }
 
         [HttpPut("profile/edit")]
-        public async Task<RestResponse> ApiEditProfile([FromForm] UserEditProfileFormModel formModel)
+        public async Task<RestResponse> ApiEditProfileAsync([FromForm] UserEditProfileFormModel formModel)
         {
             var result = appService.EditProfileAsync(formModel);
             return await result;
@@ -41,7 +42,7 @@ namespace SocialMediaBackend.Controllers
 
         [HttpGet("users/find/{*request}")]
         [AllowAnonymous]
-        public async Task<RestResponse> ApiFindUser(string request)
+        public async Task<RestResponse> ApiFindUserAsync(string request)
         {
             var result = appService.FindUserAsync(request);
             return await result;
@@ -49,7 +50,7 @@ namespace SocialMediaBackend.Controllers
 
         [HttpGet("profileById/{userId}")]
         [AllowAnonymous]
-        public async Task<RestResponse> ApiGetUserProfileById(string userId)
+        public async Task<RestResponse> ApiGetUserProfileByIdAsync(string userId)
         {
             var result = appService.GetUserProfileByIdAsync(userId);
             return await result;
@@ -57,9 +58,23 @@ namespace SocialMediaBackend.Controllers
         
         [HttpGet("profileByLogin/{userLogin}")]
         [AllowAnonymous]
-        public async Task<RestResponse> ApiGetUserProfileByLogin(string userLogin)
+        public async Task<RestResponse> ApiGetUserProfileByLoginAsync(string userLogin)
         {
             var result = appService.GetUserProfileByLoginAsync(userLogin);
+            return await result;
+        }
+
+        [HttpGet("likedPosts/{page?}")]
+        public async Task<RestResponse> ApiGetLikedPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            var result = appService.GetUserLikedPostsAsync(page, pageSize);
+            return await result;
+        }
+        
+        [HttpGet("savedPosts/{page?}")]
+        public async Task<RestResponse> ApiGetSavedPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            var result = appService.GetUserSavedPostsAsync(page, pageSize);
             return await result;
         }
     }

@@ -18,6 +18,8 @@ namespace SocialMediaBackend.Data
         public DbSet<Entities.PostInterest> PostsInterests { get; set; }
         public DbSet<Entities.PostLike> PostLikes { get; set; }
         public DbSet<Entities.CommentLike> CommentLikes { get; set; }
+        public DbSet<Entities.PostSave> PostSaves { get; set; }
+        public DbSet<Entities.PostShare> PostShares { get; set; }
 
         public DataContext(DbContextOptions options, IKdfService kdfService) : base(options)
         {

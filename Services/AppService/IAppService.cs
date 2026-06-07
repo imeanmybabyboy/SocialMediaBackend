@@ -13,15 +13,23 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> SignInAsync(string authHeader);
         public RestResponse SignOut();
         public Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel);
-        public Task<RestResponse> AddPostAsync (PostAddFormModel formModel);
+        public Task<RestResponse> AddPostAsync(PostAddFormModel formModel);
         public Task<RestResponse> EditProfileAsync(UserEditProfileFormModel formModel);
         public Task<RestResponse> FindUserAsync(string request);
         public Task<RestResponse> AddCommentAsync(CommentAddFormModel formModel);
         public Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5);
         public Task<RestResponse> TogglePostLikeAsync(string postId);
-        //public Task<RestResponse> ToggleCommentLikeAsync(LikeFormModel formModel);
+        public Task<RestResponse> ToggleCommentLikeAsync(string commentId);
+        public Task<RestResponse> TogglePostSaveAsync(string postId);
+        public Task<RestResponse> TogglePostShareAsync(string postId);
         public Task<RestResponse> GetUserProfileByIdAsync(string userId);
         public Task<RestResponse> GetUserProfileByLoginAsync(string userId);
+        public Task<RestResponse> GetUserLikedPostsAsync(int page = 1, int pageSize = 5);
+        public Task<RestResponse> GetUserSavedPostsAsync(int page = 1, int pageSize = 5);
+        public Task<RestResponse> GetUsersWhoLikedPostAsync(string postId);
+        public Task<RestResponse> GetUsersWhoLikedCommentAsync(string commentId);
+        public Task<RestResponse> GetUsersWhoSavedPostAsync(string postId);
+        public Task<RestResponse> GetUsersWhoSharedPostAsync(string postId);
 
     }
 }

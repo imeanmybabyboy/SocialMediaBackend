@@ -1,6 +1,6 @@
 ﻿namespace SocialMediaBackend.Data.Entities
 {
-    public class PostLike
+    public class PostSave
     {
         public Guid UserId { get; set; }
         public User User { get; set; } = null!;
@@ -9,5 +9,6 @@
         public Post Post { get; set; } = null!;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

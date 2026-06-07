@@ -12,14 +12,11 @@ namespace SocialMediaBackend.Data.Configuration
 
             builder.HasOne(l => l.User)
                   .WithMany(u => u.CommentLikes)
-                  .HasForeignKey(l => l.UserId)
-                  .OnDelete(DeleteBehavior.SetNull);
+                  .HasForeignKey(l => l.UserId);
 
             builder.HasOne(l => l.Comment)
                   .WithMany(c => c.Likes)
-                  .HasForeignKey(l => l.CommentId)
-                  .OnDelete(DeleteBehavior.SetNull);
-
+                  .HasForeignKey(l => l.CommentId);
         }
     }
 }

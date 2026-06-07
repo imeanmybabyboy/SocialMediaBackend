@@ -8,6 +8,8 @@
         public string Title { get; set; } = null!;
         public string? ImageUrl { get; set; } = null!;
         public string Bio { get; set; } = null!;
+        public bool IsLiked { get; set; }
+        public bool IsSaved { get; set; }
         public int LikesQnt { get; set; }
         public int SharesQnt { get; set; }
         public DateTime CreatedAt { get; set; }

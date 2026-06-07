@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
@@ -21,6 +22,51 @@ namespace SocialMediaBackend.Controllers
         public async Task<RestResponse> ApiGetOwnPostsAsync([FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {
             var result = appService.GetOwnPostsAsync(page, pageSize);
+            return await result;
+        }
+
+        [HttpPost("toggleLike/{postId}")]
+        public async Task<RestResponse> ApiTogglePostLikeAsync([FromRoute] string postId)
+        {
+            var result = appService.TogglePostLikeAsync(postId);
+            return await result;
+        }
+
+        [HttpPost("toggleSave/{postId}")]
+        public async Task<RestResponse> ApiTogglePostSaveAsync([FromRoute] string postId)
+        {
+            var result = appService.TogglePostSaveAsync(postId);
+            return await result;
+        }
+
+        [HttpPost("toggleShare/{postId}")]
+        public async Task<RestResponse> ApiTogglePostShareAsync([FromRoute] string postId)
+        {
+            var result = appService.TogglePostShareAsync(postId);
+            return await result;
+        }
+
+        [HttpGet("{postId}/likes")]
+        [AllowAnonymous]
+        public async Task<RestResponse> ApiGetUsersWhoLikedPostAsync([FromRoute] string postId)
+        {
+            var result = appService.GetUsersWhoLikedPostAsync(postId);
+            return await result;
+        }
+
+        [HttpGet("{postId}/saves")]
+        [AllowAnonymous]
+        public async Task<RestResponse> ApiGetUsersWhoSavedPostAsync([FromRoute] string postId)
+        {
+            var result = appService.GetUsersWhoSavedPostAsync(postId);
+            return await result;
+        }
+
+        [HttpGet("{postId}/shares")]
+        [AllowAnonymous]
+        public async Task<RestResponse> ApiGetUsersWhoSharedPostAsync([FromRoute] string postId)
+        {
+            var result = appService.GetUsersWhoSharedPostAsync(postId);
             return await result;
         }
     }

@@ -25,5 +25,7 @@
         public List<UserInterest> UserInterests { get; set; } = [];
         public List<PostLike> PostLikes { get; set; } = [];
         public List<CommentLike> CommentLikes { get; set; } = [];
+        public List<PostSave> PostSaves { get; set; } = [];
+        public List<PostShare> PostShares { get; set; } = [];
     }
 }

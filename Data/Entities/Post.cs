@@ -20,5 +20,7 @@
         public List<Comment> Comments { get; set; } = [];
         public List<PostInterest> PostsInterests { get; set; } = [];
         public List<PostLike> Likes { get; set; } = [];
+        public List<PostSave> Saves { get; set; } = [];
+        public List<PostShare> Shares { get; set; } = [];
     }
 }

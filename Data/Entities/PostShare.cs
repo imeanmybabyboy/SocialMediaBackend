@@ -1,6 +1,6 @@
 ﻿namespace SocialMediaBackend.Data.Entities
 {
-    public class PostLike
+    public class PostShare
     {
         public Guid UserId { get; set; }
         public User User { get; set; } = null!;
