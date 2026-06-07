@@ -62,6 +62,9 @@ body: {
   string[] Interests
 }
 
+Sign out:
+/api/user/signout
+
 Edit profile:
 /api/user/profile/edit
 body: {
@@ -83,6 +86,12 @@ Get user profile by id:
 
 Get user profile by login:
 /api/user/profileByLogin/{userLogin}
+
+Get own liked posts:
+/api/user/likedPosts/{page?}/?pageSize={pageSize}
+
+Get own saved posts:
+/api/user/savedPosts/{page?}/?pageSize={pageSize}
 ```
 
 ### PostController:
@@ -98,6 +107,24 @@ body: {
 
 Get your posts:
 /api/post/getOwn//{page?}/?pageSize={pageSize}
+
+Like a post:
+/api/post/toggleLike/{postId}
+
+Save a post:
+/api/post/toggleSave/{postId}
+
+Share a post:
+/api/post/toggleShare/{postId}
+
+Check post likes (users who liked post):
+/api/post/{postId}/likes
+
+Check post saves:
+/api/post/{postId}/shares
+
+Check post shares:
+/api/post/{postId}/shares
 ```
 
 ### CommentController:
@@ -108,4 +135,10 @@ body: {
   string PostId
   string Bio
 }
+
+Like a comment:
+/api/comment/toggleLike/{commentId}
+
+Check comment likes:
+/api/comment/{commentId}/likes
 ```
