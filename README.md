@@ -92,6 +92,21 @@ Get own liked posts:
 
 Get own saved posts:
 /api/user/savedPosts/{page?}/?pageSize={pageSize}
+
+Follow a user:
+/api/user/toggleFollow/{userId}
+
+Check user followers:
+/api/user/{userId}/followers
+
+Check user followings:
+/api/user/{userId}/following
+
+Delete a profile:
+/api/user/deleteProfile
+FormModel = {
+  Base64Password = {base64password}
+}
 ```
 
 ### PostController:
