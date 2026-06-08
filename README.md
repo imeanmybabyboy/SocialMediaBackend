@@ -102,7 +102,7 @@ Check user followers:
 Check user followings:
 /api/user/{userId}/following
 
-Delete a profile:
+Delete the profile:
 /api/user/deleteProfile
 FormModel = {
   Base64Password = {base64password}
