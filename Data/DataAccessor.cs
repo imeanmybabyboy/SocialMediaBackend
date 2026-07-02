@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Models.Post;
+using SocialMediaBackend.Models.User;
 using System.Formats.Asn1;
 
 namespace SocialMediaBackend.Data
@@ -85,6 +86,16 @@ namespace SocialMediaBackend.Data
             page = page < 1 ? 1 : page;
             Guid? userGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
+            Guid? currentUserRaceId = null;
+            if (userGuid.HasValue)
+            {
+                currentUserRaceId = await dataContext.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == userGuid.Value)
+                    .Select(u => (Guid?)u.RaceId)
+                    .FirstOrDefaultAsync();
+            }
+
             Task<List<Models.Post.Post>> posts = dataContext
                 .Posts
                 .AsNoTracking()
@@ -94,7 +105,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => p.IsPrivate)
+                .Where(p => currentUserRaceId != null && p.User!.RaceId == currentUserRaceId)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -458,24 +469,29 @@ namespace SocialMediaBackend.Data
             dataContext.Users.Update(user);
             await dataContext.SaveChangesAsync();
         }
-        public async Task<List<Entities.User>> FindUserByLoginOrUsername(string request)
+        public async Task<List<UserProfileViewModel>> FindUsersByLoginOrUsername(string request, string? sessionUserId)
         {
             var normalizedRequest = request.ToLower().Trim();
-            var user = dataContext
+            Guid? currentGuid = string.IsNullOrWhiteSpace(sessionUserId) ? null : Guid.Parse(sessionUserId);
+
+            var users = await dataContext
                 .Users
                 .Include(u => u.Race)
-                .Include(u => u.UserInterests)
-                    .ThenInclude(ui => ui.Interest)
-                .Where(u => u.Login.ToLower().Contains(normalizedRequest) ||
-                       u.Nickname.ToLower().Contains(normalizedRequest))
+                .Include(u => u.UserInterests).ThenInclude(ui => ui.Interest)
+                .Include(u => u.Followers)
+                .Where(u =>
+                    (u.Login.ToLower().Contains(normalizedRequest) ||
+                     u.Nickname.ToLower().Contains(normalizedRequest))
+                    && (sessionUserId == null || u.Id != Guid.Parse(sessionUserId)))
                 .ToListAsync();
-            return await user;
+            return users.Select(u => mapUser(u, currentGuid)).ToList();
         }
-        public async Task<List<Entities.User>> GetUsersWhoLikedPostAsync(string postId)
+        public async Task<List<UserProfileViewModel>> GetUsersWhoLikedPostAsync(string postId, string? currentUserId)
         {
             var postGuid = Guid.Parse(postId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
-            return await dataContext
+            var users = await dataContext
                 .PostLikes
                 .AsNoTracking()
                 .Where(l => l.PostId == postGuid)
@@ -484,14 +500,18 @@ namespace SocialMediaBackend.Data
                 .Include(l => l.User)
                     .ThenInclude(u => u.UserInterests)
                         .ThenInclude(ui => ui.Interest)
+                .Include(l => l.User).ThenInclude(u => u.Followers)
                 .Select(l => l.User)
                 .ToListAsync();
+
+            return users.Select(u => mapUser(u, currentGuid)).ToList();
         }
-        public async Task<List<Entities.User>> GetUsersWhoLikedCommentAsync(string commentId)
+        public async Task<List<UserProfileViewModel>> GetUsersWhoLikedCommentAsync(string commentId, string? currentUserId)
         {
             var commentGuid = Guid.Parse(commentId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
-            return await dataContext
+            var users = await dataContext
                 .CommentLikes
                 .AsNoTracking()
                 .Where(l => l.CommentId == commentGuid)
@@ -500,14 +520,18 @@ namespace SocialMediaBackend.Data
                 .Include(l => l.User)
                     .ThenInclude(u => u.UserInterests)
                         .ThenInclude(ui => ui.Interest)
+                .Include(l => l.User).ThenInclude(u => u.Followers)
                 .Select(l => l.User)
                 .ToListAsync();
+
+            return users.Select(u => mapUser(u, currentGuid)).ToList();
         }
-        public async Task<List<Entities.User>> GetUsersWhoSavedPostAsync(string postId)
+        public async Task<List<UserProfileViewModel>> GetUsersWhoSavedPostAsync(string postId, string? currentUserId)
         {
             var postGuid = Guid.Parse(postId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
-            return await dataContext
+            var users = await dataContext
                 .PostSaves
                 .AsNoTracking()
                 .Where(s => s.PostId == postGuid)
@@ -516,14 +540,18 @@ namespace SocialMediaBackend.Data
                 .Include(s => s.User)
                     .ThenInclude(u => u.UserInterests)
                         .ThenInclude(ui => ui.Interest)
+                .Include(s => s.User).ThenInclude(u => u.Followers)
                 .Select(s => s.User)
                 .ToListAsync();
+
+            return users.Select(u => mapUser(u, currentGuid)).ToList();
         }
-        public async Task<List<Entities.User>> GetUsersWhoSharedPostAsync(string postId)
+        public async Task<List<UserProfileViewModel>> GetUsersWhoSharedPostAsync(string postId, string? currentUserId)
         {
             var postGuid = Guid.Parse(postId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
-            return await dataContext
+            var users = await dataContext
                 .PostShares
                 .AsNoTracking()
                 .Where(s => s.PostId == postGuid)
@@ -532,8 +560,41 @@ namespace SocialMediaBackend.Data
                 .Include(s => s.User)
                     .ThenInclude(u => u.UserInterests)
                         .ThenInclude(ui => ui.Interest)
+                .Include(s => s.User).ThenInclude(u => u.Followers)
                 .Select(s => s.User)
                 .ToListAsync();
+
+            return users.Select(u => mapUser(u, currentGuid)).ToList();
+        }
+        public async Task<UserProfileViewModel?> GetUserProfileByIdAsync(string id, string? currentUserId)
+        {
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
+
+            return await dataContext
+                .Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .Include(u => u.Race)
+                .Include(u => u.UserInterests).ThenInclude(ui => ui.Interest)
+                .Include(u => u.Followers)
+                .Where(u => u.Id.ToString() == id && u.DeletedAt == null)
+                .Select(u => mapUser(u, currentGuid))
+                .FirstOrDefaultAsync();
+        }
+        public async Task<UserProfileViewModel?> GetUserProfileByLoginAsync(string login, string? currentUserId)
+        {
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
+
+            return await dataContext
+                .Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .Include(u => u.Race)
+                .Include(u => u.UserInterests).ThenInclude(ui => ui.Interest)
+                .Include(u => u.Followers)
+                .Where(u => u.Login.Trim().ToLower() == login.ToLower() && u.DeletedAt == null)
+                .Select(u => mapUser(u, currentGuid))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Entities.UserRole?> GetUserRoleAsync()
@@ -664,5 +725,81 @@ namespace SocialMediaBackend.Data
             await dataContext.SaveChangesAsync();
         }
 
+        public async Task<bool> FollowExistsAsync(string followerId, string followingId)
+        {
+            return await dataContext
+                .UserFollows
+                .AnyAsync(f => f.FollowerId == Guid.Parse(followerId) && f.FollowingId == Guid.Parse(followingId));
+        }
+        public async Task AddFollowAsync(Entities.UserFollow follow)
+        {
+            await dataContext.UserFollows.AddAsync(follow);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task RemoveFollowAsync(string followerId, string followingId)
+        {
+            var follow = await dataContext.UserFollows
+                .FirstOrDefaultAsync(f => f.FollowerId == Guid.Parse(followerId) && f.FollowingId == Guid.Parse(followingId));
+
+            if (follow is not null)
+            {
+                dataContext.UserFollows.Remove(follow);
+                await dataContext.SaveChangesAsync();
+            }
+        }
+        public async Task<List<UserProfileViewModel>> GetFollowersAsync(string userId, string? currentUserId)
+        {
+            Guid userGuid = Guid.Parse(userId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
+
+            return await dataContext
+                .UserFollows
+                .AsNoTracking()
+                .Where(f => f.FollowingId == userGuid)
+                .Include(f => f.Follower).ThenInclude(u => u.Race)
+                .Include(f => f.Follower).ThenInclude(u => u.UserInterests).ThenInclude(ui => ui.Interest)
+                .Include(u => u.Follower).ThenInclude(u => u.Followers)
+                .Select(f => mapUser(f.Follower, currentGuid))
+                .ToListAsync();
+        }
+        public async Task<List<UserProfileViewModel>> GetFollowingAsync(string userId, string? currentUserId)
+        {
+            Guid userGuid = Guid.Parse(userId);
+            Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
+
+            return await dataContext
+                .UserFollows
+                .AsNoTracking()
+                .Where(f => f.FollowerId == userGuid)
+                .Include(f => f.Following).ThenInclude(u => u.Race)
+                .Include(f => f.Following).ThenInclude(u => u.UserInterests).ThenInclude(ui => ui.Interest)
+                .Include(u => u.Following).ThenInclude(u => u.Followers)
+                .Select(f => mapUser(f.Following, currentGuid))
+                .ToListAsync();
+        }
+
+        private static UserProfileViewModel mapUser(Entities.User u, Guid? currentGuid) => new()
+        {
+            Id = u.Id,
+            Login = u.Login,
+            Nickname = u.Nickname,
+            Bio = u.Bio,
+            ImageUrl = u.ImageUrl,
+            LastLoginAt = u.LastLoginAt,
+            Race = new Models.Race.Race
+            {
+                Id = u.Race.Id,
+                Name = u.Race.Name,
+                ThemeColorHex = u.Race.ThemeColorHex,
+            },
+            Interests = u.UserInterests.Select(ui => new Models.Interest.Interest
+            {
+                Id = ui.Interest.Id,
+                Name = ui.Interest.Name,
+                Emoji = ui.Interest.Emoji,
+                Color = ui.Interest.Color
+            }).ToList(),
+            IsFollowing = currentGuid != null && u.Followers.Any(f => f.FollowerId == currentGuid.Value)
+        };
     }
 }

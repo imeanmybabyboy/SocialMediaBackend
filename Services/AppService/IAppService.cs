@@ -15,6 +15,7 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel);
         public Task<RestResponse> AddPostAsync(PostAddFormModel formModel);
         public Task<RestResponse> EditProfileAsync(UserEditProfileFormModel formModel);
+        public Task<RestResponse> DeleteProfileAsync(UserDeleteFormModel formModel);
         public Task<RestResponse> FindUserAsync(string request);
         public Task<RestResponse> AddCommentAsync(CommentAddFormModel formModel);
         public Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5);
@@ -30,6 +31,9 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> GetUsersWhoLikedCommentAsync(string commentId);
         public Task<RestResponse> GetUsersWhoSavedPostAsync(string postId);
         public Task<RestResponse> GetUsersWhoSharedPostAsync(string postId);
+        public Task<RestResponse> ToggleFollowAsync(string userId);
+        public Task<RestResponse> GetFollowersAsync(string userId);
+        public Task<RestResponse> GetFollowingAsync(string userId);
 
     }
 }

@@ -12,8 +12,8 @@ using SocialMediaBackend.Data;
 namespace SocialMediaBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260607092035_postSharesAdded")]
-    partial class postSharesAdded
+    [Migration("20260607142804_saltAndHashSetToNotNullable")]
+    partial class saltAndHashSetToNotNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -258,7 +258,6 @@ namespace SocialMediaBackend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ImageUrl")
@@ -297,7 +296,8 @@ namespace SocialMediaBackend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("Login")
                         .IsUnique();
@@ -307,6 +307,24 @@ namespace SocialMediaBackend.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserFollow", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("FollowedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("UserFollows");
                 });
 
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserInterest", b =>
@@ -487,6 +505,25 @@ namespace SocialMediaBackend.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserFollow", b =>
+                {
+                    b.HasOne("SocialMediaBackend.Data.Entities.User", "Follower")
+                        .WithMany("Following")
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaBackend.Data.Entities.User", "Following")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+
+                    b.Navigation("Following");
+                });
+
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserInterest", b =>
                 {
                     b.HasOne("SocialMediaBackend.Data.Entities.Interest", "Interest")
@@ -536,6 +573,10 @@ namespace SocialMediaBackend.Migrations
                     b.Navigation("CommentLikes");
 
                     b.Navigation("Comments");
+
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
 
                     b.Navigation("PostLikes");
 

@@ -49,6 +49,7 @@ namespace SocialMediaBackend.Services.AppService
         private const string ErrorWhileGettingUserInfo = "An error occurred while getting user info";
         private const string UnauthorizedActionError = "You must be logged in to perform an authorized action";
         private const string CommentNotFoundError = "Comment not found";
+        private const string CannotFollowYourselfError = "You cannot follow yourself";
 
         public async Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10)
         {
@@ -145,11 +146,6 @@ namespace SocialMediaBackend.Services.AppService
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(sessionUserId()))
-                {
-                    throw new Exception(AlreadySignedInError);
-                }
-
                 var user = await authenticateAsync(authHeader);
 
                 AuthSessionMiddleware.SaveAuth(httpContextAccessor.HttpContext!, user);
@@ -315,7 +311,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel)
         {
             RestStatus status = RestStatus.Ok;
-            Models.User.UserProfileViewModel? result = null;
+            UserProfileViewModel? result = null;
 
             try
             {
@@ -578,7 +574,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> EditProfileAsync(UserEditProfileFormModel formModel)
         {
             RestStatus status = RestStatus.Ok;
-            Models.User.UserProfileViewModel? result = null;
+            UserProfileViewModel? result = null;
 
             try
             {
@@ -682,35 +678,7 @@ namespace SocialMediaBackend.Services.AppService
                 }
                 await dataAccessor.UpdateUserAsync(user);
 
-                user = await dataAccessor.GetUserByIdAsync(user.Id.ToString());
-
-                result = new UserProfileViewModel
-                {
-                    Id = user!.Id,
-                    Role = user.Role.Title,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race!.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Email = user.Email,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    RegisteredAt = user.RegisteredAt,
-                    Interests = user.UserInterests
-                    .Select(ui => new Models.Interest.Interest
-                    {
-                        Id = ui.Interest.Id,
-                        Name = ui.Interest.Name,
-                        Emoji = ui.Interest.Emoji,
-                        Color = ui.Interest.Color
-                    }).ToList()
-                };
-
+                result = await dataAccessor.GetUserProfileByIdAsync(user.Id.ToString(), sessionUserId());
             }
             catch (Exception ex)
             {
@@ -744,31 +712,7 @@ namespace SocialMediaBackend.Services.AppService
 
             try
             {
-                var users = await dataAccessor.FindUserByLoginOrUsername(request);
-
-                result = users.Select(user => new UserProfileViewModel
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                }).ToList();
+                result = await dataAccessor.FindUsersByLoginOrUsername(request, sessionUserId());
             }
             catch (Exception)
             {
@@ -965,6 +909,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> TogglePostLikeAsync(string postId)
         {
             RestStatus status = RestStatus.Ok;
+            object? result = null;
 
             try
             {
@@ -988,6 +933,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (alreadyLiked)
                 {
                     await dataAccessor.RemovePostLikeAsync(userId, postId);
+                    result = new { isLiking = false };
                 }
                 else
                 {
@@ -997,8 +943,9 @@ namespace SocialMediaBackend.Services.AppService
                         PostId = Guid.Parse(postId),
                         CreatedAt = DateTime.UtcNow
                     });
-                }
 
+                    result = new { isLiking = true };
+                }
             }
             catch (Exception ex)
             {
@@ -1023,6 +970,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> ToggleCommentLikeAsync(string commentId)
         {
             RestStatus status = RestStatus.Ok;
+            object? result = null;
 
             try
             {
@@ -1046,6 +994,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (alreadyLiked)
                 {
                     await dataAccessor.RemoveCommentLikeAsync(userId, commentId);
+                    result = new { isLiking = false };
                 }
                 else
                 {
@@ -1055,6 +1004,7 @@ namespace SocialMediaBackend.Services.AppService
                         CommentId = Guid.Parse(commentId),
                         CreatedAt = DateTime.UtcNow
                     });
+                    result = new { isLiking = false };
                 }
             }
             catch (Exception ex)
@@ -1080,6 +1030,7 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> TogglePostSaveAsync(string postId)
         {
             RestStatus status = RestStatus.Ok;
+            object? result = null;
 
             try
             {
@@ -1103,6 +1054,8 @@ namespace SocialMediaBackend.Services.AppService
                 if (alreadysaved)
                 {
                     await dataAccessor.RemovePostSaveAsync(userId, postId);
+                    result = new { isSaving = false };
+
                 }
                 else
                 {
@@ -1112,6 +1065,7 @@ namespace SocialMediaBackend.Services.AppService
                         PostId = Guid.Parse(postId),
                         CreatedAt = DateTime.UtcNow
                     });
+                    result = new { isSaving = true };
                 }
 
             }
@@ -1134,10 +1088,11 @@ namespace SocialMediaBackend.Services.AppService
 
             return new RestResponse { Status = status, Meta = meta, Data = null };
         }
-        
+
         public async Task<RestResponse> TogglePostShareAsync(string postId)
         {
             RestStatus status = RestStatus.Ok;
+            object? result = null;
 
             try
             {
@@ -1161,6 +1116,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (alreadyShared)
                 {
                     await dataAccessor.RemovePostShareAsync(userId, postId);
+                    result = new { isSharing = false };
                 }
                 else
                 {
@@ -1170,8 +1126,8 @@ namespace SocialMediaBackend.Services.AppService
                         PostId = Guid.Parse(postId),
                         CreatedAt = DateTime.UtcNow
                     });
+                    result = new { isSharing = false };
                 }
-
             }
             catch (Exception ex)
             {
@@ -1196,39 +1152,15 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> GetUserProfileByIdAsync(string userId)
         {
             RestStatus status = RestStatus.Ok;
-            Models.User.UserProfileViewModel? result = null;
+            UserProfileViewModel? result = null;
 
             try
             {
-                var user = await dataAccessor.GetUserByIdAsync(userId);
-                if (user is null)
+                result = await dataAccessor.GetUserProfileByIdAsync(userId, sessionUserId());
+                if (result is null)
                 {
                     throw new UserException(UserNotFoundError);
                 }
-
-                result = new()
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                };
             }
             catch (UserException ex)
             {
@@ -1274,39 +1206,15 @@ namespace SocialMediaBackend.Services.AppService
         public async Task<RestResponse> GetUserProfileByLoginAsync(string userLogin)
         {
             RestStatus status = RestStatus.Ok;
-            Models.User.UserProfileViewModel? result = null;
+            UserProfileViewModel? result = null;
 
             try
             {
-                var user = await dataAccessor.GetUserByLoginAsync(userLogin);
-                if (user is null)
+                result = await dataAccessor.GetUserProfileByLoginAsync(userLogin, sessionUserId());
+                if (result is null)
                 {
                     throw new UserException(UserNotFoundError);
                 }
-
-                result = new()
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                };
             }
             catch (UserException ex)
             {
@@ -1459,30 +1367,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (post is null)
                     throw new PostException(PostNotFoundError);
 
-                var users = await dataAccessor.GetUsersWhoLikedPostAsync(postId);
-                result = users.Select(user => new Models.User.UserProfileViewModel
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                }).ToList();
+                result = await dataAccessor.GetUsersWhoLikedPostAsync(postId, sessionUserId());
             }
             catch (Exception ex)
             {
@@ -1526,30 +1411,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (comment is null)
                     throw new CommentException(CommentNotFoundError);
 
-                var users = await dataAccessor.GetUsersWhoLikedCommentAsync(commentId);
-                result = users.Select(user => new Models.User.UserProfileViewModel
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                }).ToList();
+                result = await dataAccessor.GetUsersWhoLikedCommentAsync(commentId, sessionUserId());
             }
             catch (Exception ex)
             {
@@ -1593,30 +1455,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (post is null)
                     throw new PostException(PostNotFoundError);
 
-                var users = await dataAccessor.GetUsersWhoSavedPostAsync(postId);
-                result = users.Select(user => new Models.User.UserProfileViewModel
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                }).ToList();
+                result = await dataAccessor.GetUsersWhoSavedPostAsync(postId, sessionUserId());
             }
             catch (Exception ex)
             {
@@ -1660,30 +1499,7 @@ namespace SocialMediaBackend.Services.AppService
                 if (post is null)
                     throw new PostException(PostNotFoundError);
 
-                var users = await dataAccessor.GetUsersWhoSharedPostAsync(postId);
-                result = users.Select(user => new Models.User.UserProfileViewModel
-                {
-                    Id = user.Id,
-                    Race = new Models.Race.Race
-                    {
-                        Id = user.Race.Id,
-                        Name = user.Race.Name,
-                        ThemeColorHex = user.Race.ThemeColorHex,
-                    },
-                    Login = user.Login,
-                    Nickname = user.Nickname,
-                    Bio = user.Bio,
-                    ImageUrl = user.ImageUrl,
-                    LastLoginAt = user.LastLoginAt,
-                    Interests = user.UserInterests
-                        .Select(ui => new Models.Interest.Interest
-                        {
-                            Id = ui.Interest.Id,
-                            Name = ui.Interest.Name,
-                            Emoji = ui.Interest.Emoji,
-                            Color = ui.Interest.Color
-                        }).ToList()
-                }).ToList();
+                result = await dataAccessor.GetUsersWhoSharedPostAsync(postId, sessionUserId());
             }
             catch (Exception ex)
             {
@@ -1712,6 +1528,270 @@ namespace SocialMediaBackend.Services.AppService
                 Data = result
             };
         }
+
+        public async Task<RestResponse> ToggleFollowAsync(string targetUserId)
+        {
+            RestStatus status = RestStatus.Ok;
+            object? result = null;
+
+            try
+            {
+                var currentUserId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(currentUserId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                if (currentUserId == targetUserId)
+                    throw new UserException(CannotFollowYourselfError);
+
+                var targetUser = await dataAccessor.GetUserByIdAsync(targetUserId);
+                if (targetUser is null)
+                    throw new UserException(UserNotFoundError);
+
+                bool alreadyFollowing = await dataAccessor.FollowExistsAsync(currentUserId, targetUserId);
+                if (alreadyFollowing)
+                {
+                    await dataAccessor.RemoveFollowAsync(currentUserId, targetUserId);
+                    result = new { isFollowing = false };
+                }
+                else
+                {
+                    await dataAccessor.AddFollowAsync(new Data.Entities.UserFollow
+                    {
+                        FollowerId = Guid.Parse(currentUserId),
+                        FollowingId = Guid.Parse(targetUserId),
+                        FollowedAt = DateTime.UtcNow
+                    });
+                    result = new { isFollowing = true };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "User",
+                Method = "POST",
+                Path = $"/api/user/{targetUserId}/follow",
+                DataType = "application/json (object)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", $"/api/user/{targetUserId}/follow" } }
+            };
+
+            return new RestResponse { Status = status, Meta = meta, Data = result };
+        }
+
+        public async Task<RestResponse> GetFollowersAsync(string userId)
+        {
+            RestStatus status = RestStatus.Ok;
+            List<Models.User.UserProfileViewModel> result = [];
+
+            try
+            {
+                var user = await dataAccessor.GetUserByIdAsync(userId);
+                if (user is null) throw new UserException(UserNotFoundError);
+
+                result = await dataAccessor.GetFollowersAsync(userId, sessionUserId());
+
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "Users",
+                Method = "GET",
+                Path = $"/api/user/{userId}/followers",
+                DataType = "application/json (array)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", $"/api/user/{userId}/followers" } }
+            };
+
+            return new RestResponse { Status = status, Meta = meta, Data = result };
+        }
+
+        public async Task<RestResponse> GetFollowingAsync(string userId)
+        {
+            RestStatus status = RestStatus.Ok;
+            List<Models.User.UserProfileViewModel> result = [];
+
+            try
+            {
+                var user = await dataAccessor.GetUserByIdAsync(userId);
+                if (user is null) throw new UserException(UserNotFoundError);
+
+                result = await dataAccessor.GetFollowingAsync(userId, sessionUserId());
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "Users",
+                Method = "GET",
+                Path = $"/api/user/{userId}/following",
+                DataType = "application/json (array)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", $"/api/user/{userId}/following" } }
+            };
+
+            return new RestResponse { Status = status, Meta = meta, Data = result };
+        }
+
+        public async Task<RestResponse> DeleteProfileAsync(UserDeleteFormModel formModel)
+        {
+            RestStatus status = RestStatus.Ok;
+
+            try
+            {
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                if (string.IsNullOrWhiteSpace(formModel.Base64Password))
+                    throw new PasswordException(IncorrectPasswordError);
+
+                string userPass;
+
+                try
+                {
+                    userPass = Encoding.UTF8.GetString(Convert.FromBase64String(formModel.Base64Password));
+                }
+                catch (Exception)
+                {
+                    throw new Exception(InvalidBase64FormatError);
+                }
+
+                string[] parts = userPass.Split(':', 2);
+
+                if (parts.Length != 2)
+                    throw new UsernamePasswordFormatException(InvalidUserPasswordFormat);
+
+                string login = parts[0].ToLower().Trim();
+                string password = parts[1];
+
+                var user = await dataAccessor.GetUserByLoginAsync(login);
+
+                string passwordHash = user != null ? kdfService.Dk(password, user.Salt)
+                    : kdfService.Dk(password, "dummy-salt-32-chars-long-xxxx");
+
+                if (user is null || passwordHash != user.PasswordHash)
+                    throw new CredentialsException(IncorrectPasswordError);
+
+                if (user.Id.ToString() != userId)
+                    throw new CredentialsException(IncorrectPasswordError);
+
+                user.Email = null!;
+                user.ImageUrl = null!;
+                user.LastLoginAt = null;
+                user.Bio = null;
+                user.DeletedAt = DateTime.UtcNow;
+
+                await dataAccessor.UpdateUserAsync(user);
+
+                AuthSessionMiddleware.Logout(httpContextAccessor.HttpContext!);
+            }
+            catch (AuthorizationFormatException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+            catch (UsernamePasswordFormatException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+            catch (CredentialsException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 401, Phrase = ex.Message };
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 401, Phrase = ex.Message };
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.ToString() };
+            }
+
+            var meta = new RestMeta
+            {
+                Service = "SocialMediaBackend",
+                Resource = "User",
+                Method = "DELETE",
+                Path = "/api/user/delete",
+                DataType = "application/json (object)",
+                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                Cache = 0,
+                Links = new Dictionary<string, string> { { "self", "/api/user/delete" } }
+            };
+
+            return new RestResponse { Status = status, Meta = meta, Data = null };
+        }
+
+        //public async Task<RestResponse> GetSelfAsync()
+        //{
+        //    RestStatus status = RestStatus.Ok;
+        //    UserProfileViewModel? result = null;
+
+        //    try
+        //    {
+        //        result = await dataAccessor.GetUserProfileByIdAsync(sessionUserId());
+        //        if (result is null)
+        //        {
+        //            throw new UserException(UserNotFoundError);
+        //        }
+        //    }
+        //    catch (UserException ex)
+        //    {
+        //        status = new RestStatus
+        //        {
+        //            IsOk = false,
+        //            Code = 404,
+        //            Phrase = ex.Message
+        //        };
+        //    }
+        //    catch (Exception)
+        //    {
+        //        status = new RestStatus
+        //        {
+        //            IsOk = false,
+        //            Code = 500,
+        //            Phrase = ErrorWhileGettingUserInfo
+        //        };
+        //    }
+        //    var meta = new RestMeta
+        //    {
+        //        Service = "SocialMediaBackend",
+        //        Resource = "Users",
+        //        Method = "GET",
+        //        Path = $"/api/user/profile/{userId}",
+        //        DataType = "application/json (object)",
+        //        ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        //        Cache = 0,
+        //        Links = new Dictionary<string, string>
+        //        {
+        //            { "self", $"/api/user/profile/{userId}" },
+        //        }
+        //    };
+
+        //    return new RestResponse
+        //    {
+        //        Status = status,
+        //        Meta = meta,
+        //        Data = result
+        //    };
+        //}
 
     }
 }

@@ -8,7 +8,7 @@
         public string Login { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public string? Bio { get; set; }
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public DateTime? LastLoginAt { get; set; }
 
@@ -27,5 +27,7 @@
         public List<CommentLike> CommentLikes { get; set; } = [];
         public List<PostSave> PostSaves { get; set; } = [];
         public List<PostShare> PostShares { get; set; } = [];
+        public List<UserFollow> Following { get; set; } = [];
+        public List<UserFollow> Followers { get; set; } = [];
     }
 }

@@ -77,5 +77,41 @@ namespace SocialMediaBackend.Controllers
             var result = appService.GetUserSavedPostsAsync(page, pageSize);
             return await result;
         }
+
+        [HttpPost("toggleFollow/{userId}")]
+        public async Task<RestResponse> ApiToggleFollowAsync([FromRoute] string userId)
+        {
+            var result = appService.ToggleFollowAsync(userId);
+            return await result;
+        }
+
+        [HttpGet("{userId}/followers")]
+        public async Task<RestResponse> ApiGetFollowersAsync([FromRoute] string userId)
+        {
+            var result = appService.GetFollowersAsync(userId);
+            return await result;
+        }
+
+        [HttpGet("{userId}/following")]
+        public async Task<RestResponse> ApiGetFollowingAsync([FromRoute] string userId)
+        {
+            var result = appService.GetFollowingAsync(userId);
+            return await result;
+        }
+
+        [HttpDelete("deleteProfile")]
+        public async Task<RestResponse> ApiDeleteProfileAsync([FromForm] UserDeleteFormModel formModel)
+        {
+            var result = appService.DeleteProfileAsync(formModel);
+            return await result;
+        }
+
+        //[HttpGet("getSelf")]
+        //public async Task<RestResponse> ApiDeleteProfileAsync()
+        //{
+        //    var result = appService.GetUserProfileByIdAsync();
+        //    return await result;
+        //}
+
     }
 }

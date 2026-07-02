@@ -8,5 +8,6 @@ namespace SocialMediaBackend.Models.Post
         public IFormFile? PostImage { get; set; }
         public string Bio { get; set; } = null!;
         public string[] Interests { get; set; } = [];
+        public bool IsPrivate { get; set; } = false;
     }
 }

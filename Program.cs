@@ -33,11 +33,12 @@ namespace SocialMediaBackend
 
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(15);
+                options.IdleTimeout = TimeSpan.FromDays(3);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.IOTimeout = TimeSpan.FromDays(3);
             });
 
             string connectionString = builder.Configuration.GetConnectionString("SocialMediaDatabase") ?? throw new FileNotFoundException("Connection String Configuration: key not found: SocialMediaDatabase");
@@ -51,7 +52,7 @@ namespace SocialMediaBackend
             }));
             builder.Services.AddCors(options =>
                 options.AddDefaultPolicy(policy =>
-                    policy.WithOrigins("http://localhost:5173")
+                    policy.WithOrigins("http://localhost:5173", "https://zealous-coast-02bfa1803.7.azurestaticapps.net")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()

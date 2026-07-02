@@ -118,6 +118,31 @@ namespace SocialMediaBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserFollows",
+                columns: table => new
+                {
+                    FollowerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FollowingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FollowedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFollows", x => new { x.FollowerId, x.FollowingId });
+                    table.ForeignKey(
+                        name: "FK_UserFollows_Users_FollowerId",
+                        column: x => x.FollowerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserFollows_Users_FollowingId",
+                        column: x => x.FollowingId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UsersInterests",
                 columns: table => new
                 {
@@ -198,6 +223,56 @@ namespace SocialMediaBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PostSaves",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostSaves", x => new { x.UserId, x.PostId });
+                    table.ForeignKey(
+                        name: "FK_PostSaves_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostSaves_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostShares",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostShares", x => new { x.UserId, x.PostId });
+                    table.ForeignKey(
+                        name: "FK_PostShares_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostShares_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PostsInterests",
                 columns: table => new
                 {
@@ -220,6 +295,36 @@ namespace SocialMediaBackend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "CommentLikes",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentLikes", x => new { x.UserId, x.CommentId });
+                    table.ForeignKey(
+                        name: "FK_CommentLikes_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CommentLikes_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommentLikes_CommentId",
+                table: "CommentLikes",
+                column: "CommentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
@@ -247,9 +352,24 @@ namespace SocialMediaBackend.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostSaves_PostId",
+                table: "PostSaves",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostShares_PostId",
+                table: "PostShares",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostsInterests_InterestId",
                 table: "PostsInterests",
                 column: "InterestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFollows_FollowingId",
+                table: "UserFollows",
+                column: "FollowingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -283,22 +403,34 @@ namespace SocialMediaBackend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "CommentLikes");
 
             migrationBuilder.DropTable(
                 name: "PostLikes");
 
             migrationBuilder.DropTable(
+                name: "PostSaves");
+
+            migrationBuilder.DropTable(
+                name: "PostShares");
+
+            migrationBuilder.DropTable(
                 name: "PostsInterests");
+
+            migrationBuilder.DropTable(
+                name: "UserFollows");
 
             migrationBuilder.DropTable(
                 name: "UsersInterests");
 
             migrationBuilder.DropTable(
-                name: "Posts");
+                name: "Comments");
 
             migrationBuilder.DropTable(
                 name: "Interests");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Users");

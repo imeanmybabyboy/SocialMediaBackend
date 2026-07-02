@@ -20,6 +20,7 @@ namespace SocialMediaBackend.Data
         public DbSet<Entities.CommentLike> CommentLikes { get; set; }
         public DbSet<Entities.PostSave> PostSaves { get; set; }
         public DbSet<Entities.PostShare> PostShares { get; set; }
+        public DbSet<Entities.UserFollow> UserFollows { get; set; }
 
         public DataContext(DbContextOptions options, IKdfService kdfService) : base(options)
         {

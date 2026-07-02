@@ -12,8 +12,8 @@ using SocialMediaBackend.Data;
 namespace SocialMediaBackend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260531131146_commentLikeadded")]
-    partial class commentLikeadded
+    [Migration("20260607115716_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,6 +208,24 @@ namespace SocialMediaBackend.Migrations
                     b.ToTable("PostSaves");
                 });
 
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.PostShare", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "PostId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostShares");
+                });
+
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.Race", b =>
                 {
                     b.Property<Guid>("Id")
@@ -289,6 +307,24 @@ namespace SocialMediaBackend.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserFollow", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FollowingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("FollowedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("UserFollows");
                 });
 
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserInterest", b =>
@@ -434,6 +470,25 @@ namespace SocialMediaBackend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.PostShare", b =>
+                {
+                    b.HasOne("SocialMediaBackend.Data.Entities.Post", "Post")
+                        .WithMany("Shares")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaBackend.Data.Entities.User", "User")
+                        .WithMany("PostShares")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.User", b =>
                 {
                     b.HasOne("SocialMediaBackend.Data.Entities.Race", "Race")
@@ -448,6 +503,25 @@ namespace SocialMediaBackend.Migrations
                     b.Navigation("Race");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserFollow", b =>
+                {
+                    b.HasOne("SocialMediaBackend.Data.Entities.User", "Follower")
+                        .WithMany("Following")
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaBackend.Data.Entities.User", "Following")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+
+                    b.Navigation("Following");
                 });
 
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.UserInterest", b =>
@@ -490,6 +564,8 @@ namespace SocialMediaBackend.Migrations
                     b.Navigation("PostsInterests");
 
                     b.Navigation("Saves");
+
+                    b.Navigation("Shares");
                 });
 
             modelBuilder.Entity("SocialMediaBackend.Data.Entities.User", b =>
@@ -498,9 +574,15 @@ namespace SocialMediaBackend.Migrations
 
                     b.Navigation("Comments");
 
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
+
                     b.Navigation("PostLikes");
 
                     b.Navigation("PostSaves");
+
+                    b.Navigation("PostShares");
 
                     b.Navigation("Posts");
 
