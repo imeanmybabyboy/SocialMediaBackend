@@ -65,7 +65,7 @@ body: {
 Sign out:
 /api/user/signout
 
-Edit profile:
+Edit the profile:
 /api/user/profile/edit
 body: {
   string? Login 
@@ -140,6 +140,23 @@ Check post saves:
 
 Check post shares:
 /api/post/{postId}/shares
+
+Get someone else's posts:
+/api/post/getUserPosts/{userId}/{page?}/?pageSize={pageSize}
+
+Edit your post:
+/api/post/edit
+body (formData): {
+  string PostId
+  string? Title
+  IFormFile? PostImage
+  string? Bio
+  string[]? Interests 
+  bool? IsPrivate
+}
+
+Delete a post:
+/api/post/{postId}/delete
 ```
 
 ### CommentController:
@@ -156,4 +173,11 @@ Like a comment:
 
 Check comment likes:
 /api/comment/{commentId}/likes
+
+Edit a comment:
+/api/comment/edit
+body (formData): {
+  string CommentId
+  string? Bio
+}
 ```
