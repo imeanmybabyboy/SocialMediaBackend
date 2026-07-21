@@ -25,6 +25,15 @@ namespace SocialMediaBackend.Controllers
             return await result;
         }
 
+        [HttpGet("getUserPosts/{userId}")]
+        [AllowAnonymous]
+        public async Task<RestResponse> ApiUserPostsAsync([FromRoute] string userId, [FromRoute] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            var result = appService.GetUserPostsAsync(userId, page, pageSize);
+            return await result;
+        }
+
+
         [HttpPost("toggleLike/{postId}")]
         public async Task<RestResponse> ApiTogglePostLikeAsync([FromRoute] string postId)
         {
@@ -69,5 +78,20 @@ namespace SocialMediaBackend.Controllers
             var result = appService.GetUsersWhoSharedPostAsync(postId);
             return await result;
         }
+
+        [HttpPut("edit")]
+        public async Task<RestResponse> ApiEditPostAsync([FromForm] PostEditFormModel formModel)
+        {
+            var result = appService.EditPostAsync(formModel);
+            return await result;
+        }
+
+        [HttpDelete("{postId}/delete")]
+        public async Task<RestResponse> ApiDeletePostAsync([FromRoute] string postId)
+        {
+            var result = appService.DeletePostAsync(postId);
+            return await result;
+        }
+
     }
 }

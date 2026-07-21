@@ -30,7 +30,7 @@ namespace SocialMediaBackend.Controllers
         [HttpPost("signout")]
         public RestResponse ApiSignOut()
         {
-            return appService.SignOut();
+            return appService.SignOutAsync();
         }
 
         [HttpPut("profile/edit")]
@@ -106,12 +106,12 @@ namespace SocialMediaBackend.Controllers
             return await result;
         }
 
-        //[HttpGet("getSelf")]
-        //public async Task<RestResponse> ApiDeleteProfileAsync()
-        //{
-        //    var result = appService.GetUserProfileByIdAsync();
-        //    return await result;
-        //}
+        [HttpGet("getCurrentUser")]
+        public async Task<RestResponse> ApiDeleteProfileAsync()
+        {
+            var result = appService.GetCurrentUserAsync();
+            return await result;
+        }
 
     }
 }

@@ -153,7 +153,7 @@ namespace SocialMediaBackend.Data
 
             return await posts;
         }
-        public async Task<List<Models.Post.Post>> GetUsersPostsAsync(string currentUserId, int page = 1, int pageSize = 5)
+        public async Task<List<Models.Post.Post>> GetUserPostsAsync(string userId, string? currentUserId = null, int page = 1, int pageSize = 5)
         {
             page = page < 1 ? 1 : page;
             Guid? userGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
@@ -167,7 +167,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => p.UserId.ToString() == currentUserId)
+                .Where(p => p.UserId.ToString() == userId)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -342,6 +342,11 @@ namespace SocialMediaBackend.Data
             await dataContext.Posts.AddAsync(post);
             await dataContext.SaveChangesAsync();
         }
+        public async Task UpdatePostAsync(Entities.Post post)
+        {
+            dataContext.Posts.Update(post);
+            await dataContext.SaveChangesAsync();
+        }
 
         public async Task AddPostInterestsAsync(List<PostInterest> postInterests)
         {
@@ -358,10 +363,15 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .FirstOrDefaultAsync(p => p.Id.ToString() == id);
 
-            if (post == null)
-                throw new Exception($"Post with id {id} not found");
-
             return await post;
+        }
+        public async Task DeletePostInterestsAsync(string postId)
+        {
+            var interests = dataContext
+                .PostsInterests
+                .Where(pi => pi.PostId.ToString() == postId);
+            dataContext.PostsInterests.RemoveRange(interests);
+            await dataContext.SaveChangesAsync();
         }
 
         public async Task<List<Models.Race.Race>> GetRacesAsync()
@@ -379,7 +389,6 @@ namespace SocialMediaBackend.Data
 
             return await raceTask;
         }
-
         public async Task<Entities.Race?> GetRaceByIdAsync(string id)
         {
             var race = dataContext
@@ -387,7 +396,6 @@ namespace SocialMediaBackend.Data
                 .FirstOrDefaultAsync(r => r.Id.ToString().ToLower() == id.ToLower());
             return await race;
         }
-
         public async Task<List<Models.Interest.Interest>> GetInterestsAsync()
         {
             Task<List<Models.Interest.Interest>> interestsTask = dataContext
@@ -566,7 +574,7 @@ namespace SocialMediaBackend.Data
 
             return users.Select(u => mapUser(u, currentGuid)).ToList();
         }
-        public async Task<UserProfileViewModel?> GetUserProfileByIdAsync(string id, string? currentUserId)
+        public async Task<UserProfileViewModel?> GetUserProfileByIdAsync(string id, string? currentUserId = null)
         {
             Guid? currentGuid = string.IsNullOrWhiteSpace(currentUserId) ? null : Guid.Parse(currentUserId);
 
@@ -620,14 +628,16 @@ namespace SocialMediaBackend.Data
             await dataContext.Comments.AddAsync(comment);
             await dataContext.SaveChangesAsync();
         }
+        public async Task UpdateCommentAsync(Entities.Comment comment)
+        {
+            dataContext.Comments.Update(comment);
+            await dataContext.SaveChangesAsync();
+        }
         public async Task<Entities.Comment?> GetCommentByIdAsync(string id)
         {
             var comment = dataContext
                 .Comments
                 .FirstOrDefaultAsync(p => p.Id.ToString() == id);
-
-            if (comment == null)
-                throw new Exception($"Comment with id {id} not found");
 
             return await comment;
 

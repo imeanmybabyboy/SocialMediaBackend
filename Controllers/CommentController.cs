@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Comment;
-using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Services.AppService;
 
@@ -31,6 +29,13 @@ namespace SocialMediaBackend.Controllers
         public async Task<RestResponse> ApiGetUsersWhoLikedCommentAsync([FromRoute] string commentId)
         {
             var result = appService.GetUsersWhoLikedCommentAsync(commentId);
+            return await result;
+        }
+
+        [HttpPut("edit")]
+        public async Task<RestResponse> ApiEditCommentAsync([FromForm] CommentEditFormModel formModel)
+        {
+            var result = appService.EditCommentAsync(formModel);
             return await result;
         }
     }

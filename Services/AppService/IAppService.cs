@@ -11,14 +11,16 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> GetPrivatePostsAsync(int page = 1, int pageSize = 5);
         public Task<RestResponse> GetAdditionalSignUpInfoAsync();
         public Task<RestResponse> SignInAsync(string authHeader);
-        public RestResponse SignOut();
+        public RestResponse SignOutAsync();
         public Task<RestResponse> SignUpAsync(UserSignUpFormModel formModel);
         public Task<RestResponse> AddPostAsync(PostAddFormModel formModel);
         public Task<RestResponse> EditProfileAsync(UserEditProfileFormModel formModel);
         public Task<RestResponse> DeleteProfileAsync(UserDeleteFormModel formModel);
         public Task<RestResponse> FindUserAsync(string request);
         public Task<RestResponse> AddCommentAsync(CommentAddFormModel formModel);
+        public Task<RestResponse> EditCommentAsync(CommentEditFormModel formModel);
         public Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5);
+        public Task<RestResponse> GetUserPostsAsync(string userId, int page = 1, int pageSize = 5);
         public Task<RestResponse> TogglePostLikeAsync(string postId);
         public Task<RestResponse> ToggleCommentLikeAsync(string commentId);
         public Task<RestResponse> TogglePostSaveAsync(string postId);
@@ -34,6 +36,8 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> ToggleFollowAsync(string userId);
         public Task<RestResponse> GetFollowersAsync(string userId);
         public Task<RestResponse> GetFollowingAsync(string userId);
-
+        public Task<RestResponse> GetCurrentUserAsync();
+        public Task<RestResponse> EditPostAsync(PostEditFormModel formModel);
+        public Task<RestResponse> DeletePostAsync(string postId);
     }
 }
