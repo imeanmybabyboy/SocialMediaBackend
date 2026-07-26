@@ -19,6 +19,7 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> FindUserAsync(string request);
         public Task<RestResponse> AddCommentAsync(CommentAddFormModel formModel);
         public Task<RestResponse> EditCommentAsync(CommentEditFormModel formModel);
+        public Task<RestResponse> DeleteCommentAsync(string commentId);
         public Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5);
         public Task<RestResponse> GetUserPostsAsync(string userId, int page = 1, int pageSize = 5);
         public Task<RestResponse> TogglePostLikeAsync(string postId);

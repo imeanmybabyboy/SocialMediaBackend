@@ -13,6 +13,7 @@ using SocialMediaBackend.Models.User;
 using SocialMediaBackend.Services.AppService;
 using SocialMediaBackend.Services.BlobStorage;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -52,6 +53,50 @@ namespace SocialMediaBackend.Services.AppService
         private const string CommentNotFoundError = "Comment not found";
         private const string CannotFollowYourselfError = "You cannot follow yourself";
 
+        /// <summary>
+        /// Builds a ready-to-return RestResponse, filling separate for each response fields
+        /// </summary>
+        private static RestResponse buildResponse(
+            RestStatus status,
+            object? data,
+            string resource,
+            string method,
+            string path,
+            string dataType = "application/json (object)",
+            Dictionary<string, string>? links = null)
+        {
+            return new RestResponse
+            {
+                Status = status,
+                Meta = new RestMeta
+                {
+                    Service = "SocialMediaBackend",
+                    Resource = resource,
+                    Method = method,
+                    Path = path,
+                    DataType = dataType,
+                    ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    Cache = 0,
+                    Links = links ?? new Dictionary<string, string> { { "self", path } }
+                },
+                Data = data
+            };
+
+        }
+
+        /// <summary>
+        /// Builds the self/next/prev links for a paginated endpoint given a function that maps a page number to its path.
+        /// </summary>
+        private static Dictionary<string, string> buildPaginationLinks(int page, Func<int, string> pathForPage)
+        {
+            return new Dictionary<string, string>
+            {
+                { "self", pathForPage(page) },
+                { "next", pathForPage(page + 1) },
+                { "prev", page > 1 ? pathForPage(page - 1) : "" }
+            };
+        }
+
         public async Task<RestResponse> GetPostsAsync(int page = 1, int pageSize = 10)
         {
             RestStatus status = RestStatus.Ok;
@@ -72,29 +117,8 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Posts",
-                Method = "GET",
-                Path = $"/api/home/posts/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/home/posts/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/home/posts/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/home/posts/{page - 1}?pageSize={pageSize}" : "" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Post", "GET", $"/api/home/posts/{page}?pageSize={pageSize}",
+                links: buildPaginationLinks(page, p => $"/api/home/posts/{p}?pageSize={pageSize}"));
         }
 
         public async Task<RestResponse> GetAdditionalSignUpInfoAsync()
@@ -117,27 +141,7 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "AdditionalSignUpInfo",
-                Method = "GET",
-                Path = "/api/reference/additionalSignUpInfo",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/reference/additionalSignUpInfo" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "AdditionalSignUpInfo", "GET", "/api/reference/additionalSignUpInfo");
         }
 
         public async Task<RestResponse> SignInAsync(string authHeader)
@@ -204,27 +208,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "POST",
-                Path = "/api/user/signin",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", "/api/user/signin" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "POST", "/api/user/signin");
         }
 
         public RestResponse SignOutAsync()
@@ -245,19 +229,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "POST",
-                Path = "/api/user/signout",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/user/signout" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, null, "User", "POST", "/api/user/signout");
         }
 
         private async Task<User> authenticateAsync(string authHeader)
@@ -427,24 +399,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ErrorWhileSigningUp };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "POST",
-                Path = "/api/user/signup",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/user/signup" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "POST", "/api/user/signup");
         }
 
         public async Task<RestResponse> AddPostAsync(PostAddFormModel formModel)
@@ -552,24 +507,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Post",
-                Method = "POST",
-                Path = "/api/post/add",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/post/add" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Post", "POST", "/api/post/add");
         }
 
         public async Task<RestResponse> EditProfileAsync(UserEditProfileFormModel formModel)
@@ -686,24 +624,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "PUT",
-                Path = "/api/user/edit",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/user/edit" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "PUT", "/api/user/edit");
         }
 
         public async Task<RestResponse> FindUserAsync(string request)
@@ -720,27 +641,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ErrorWhileFindingUser };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "GET",
-                Path = $"/api/users/find?login={request}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/users/find?login={request}" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/users/find?login={request}");
         }
 
         public async Task<RestResponse> AddCommentAsync(CommentAddFormModel formModel)
@@ -799,24 +700,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Comment",
-                Method = "POST",
-                Path = "/api/comment/add",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/comment/add" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result,
-            };
+            return buildResponse(status, result, "Comment", "POST", $"/api/comment/add");
         }
 
         public async Task<RestResponse> GetOwnPostsAsync(int page = 1, int pageSize = 5)
@@ -837,29 +721,8 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Post",
-                Method = "GET",
-                Path = $"/api/post/getOwn/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> {
-                    { "self", $"/api/post/getOwn/{userId}/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/post/getOwn/{userId}/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/post/getOwn/{userId}/{page - 1}?pageSize={pageSize}" : "" }
-
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Post", "GET", $"/api/post/getOwn/{page}?pageSize={pageSize}",
+                links: buildPaginationLinks(page, p => $"/api/post/getOwn/{userId}/{p}?pageSize={pageSize}"));
         }
 
         public async Task<RestResponse> GetUserPostsAsync(string userId, int page = 1, int pageSize = 5)
@@ -881,30 +744,9 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Post",
-                Method = "GET",
-                Path = $"/api/post/getByUser/{userId}/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> {
-                    { "self", $"/api/post/getByUser/{userId}/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/post/getByUser/{userId}/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/post/getByUser/{userId}/{page - 1}?pageSize={pageSize}" : "" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Post", "GET", $"/api/post/getByUser/{userId}/{page}?pageSize={pageSize}", 
+                links: buildPaginationLinks(page, p => $"/api/post/getByUser/{userId}/{p}?pageSize={pageSize}"));
         }
-
 
         public async Task<RestResponse> GetPrivatePostsAsync(int page = 1, int pageSize = 5)
         {
@@ -926,29 +768,8 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Posts",
-                Method = "GET",
-                Path = $"/api/home/posts/private/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/home/posts/private/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/home/posts/private/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/home/posts/private/{page - 1}?pageSize={pageSize}" : "" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Posts", "GET", $"/api/home/posts/private/{page}?pageSize={pageSize}",
+                links: buildPaginationLinks(page, p => $"/api/home/posts/private/{p}?pageSize={pageSize}"));
         }
 
         public async Task<RestResponse> TogglePostLikeAsync(string postId)
@@ -997,19 +818,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "PostLike",
-                Method = "POST",
-                Path = "/api/post/like",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/post/like" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, result, "PostLike", "POST", $"/api/post/like");
         }
 
         public async Task<RestResponse> ToggleCommentLikeAsync(string commentId)
@@ -1057,19 +866,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "PostLike",
-                Method = "POST",
-                Path = "/api/comment/like",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/comment/like" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, result, "CommentLike", "POST", $"/api/comment/like");
         }
 
         public async Task<RestResponse> TogglePostSaveAsync(string postId)
@@ -1119,19 +916,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "PostSave",
-                Method = "POST",
-                Path = "/api/post/save",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/post/save" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, result, "PostSave", "POST", $"/api/post/save");
         }
 
         public async Task<RestResponse> TogglePostShareAsync(string postId)
@@ -1179,19 +964,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "PostShare",
-                Method = "POST",
-                Path = "/api/post/share",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/post/share" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, result, "PostShare", "POST", $"/api/post/share");
         }
 
         public async Task<RestResponse> GetUserProfileByIdAsync(string userId)
@@ -1225,27 +998,8 @@ namespace SocialMediaBackend.Services.AppService
                     Phrase = ErrorWhileGettingUserInfo
                 };
             }
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/user/profile/{userId}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/user/profile/{userId}" },
-                }
-            };
 
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/user/profile/{userId}");
         }
 
         public async Task<RestResponse> GetUserProfileByLoginAsync(string userLogin)
@@ -1279,27 +1033,8 @@ namespace SocialMediaBackend.Services.AppService
                     Phrase = ErrorWhileGettingUserInfo
                 };
             }
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/user/profile/{userLogin}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/user/profile/{userLogin}" },
-                }
-            };
 
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/user/profile/{userLogin}");
         }
 
         public async Task<RestResponse> GetUserLikedPostsAsync(int page = 1, int pageSize = 5)
@@ -1325,29 +1060,8 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Posts",
-                Method = "GET",
-                Path = $"/api/user/likedPosts/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/user/likedPosts/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/user/likedPosts/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/user/likedPosts/{page - 1}?pageSize={pageSize}" : "" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Posts", "GET", $"/api/user/likedPosts/{page}?pageSize={pageSize}",
+                links: buildPaginationLinks(page, p => $"/api/user/likedPosts/{p}?pageSize={pageSize}"));
         }
 
         public async Task<RestResponse> GetUserSavedPostsAsync(int page = 1, int pageSize = 5)
@@ -1373,29 +1087,9 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Posts",
-                Method = "GET",
-                Path = $"/api/user/savedPosts/{page}?pageSize={pageSize}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/user/savedPosts/{page}?pageSize={pageSize}" },
-                    { "next", $"/api/user/savedPosts/{page + 1}?pageSize={pageSize}" },
-                    { "prev", page > 1 ? $"/api/user/savedPosts/{page - 1}?pageSize={pageSize}" : "" }
-                }
-            };
+            return buildResponse(status, result, "Posts", "GET", $"/api/user/savedPosts/{page}?pageSize={pageSize}",
+                links: buildPaginationLinks(page, p => $"/api/user/savedPosts/{p}?pageSize={pageSize}"));
 
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
         }
 
         public async Task<RestResponse> GetUsersWhoLikedPostAsync(string postId)
@@ -1419,27 +1113,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/post/{postId}/likes",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/post/{postId}/likes" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/post/{postId}/likes");
         }
 
         public async Task<RestResponse> GetUsersWhoLikedCommentAsync(string commentId)
@@ -1463,27 +1137,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/comment/{commentId}/likes",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/comment/{commentId}/likes" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/comment/{commentId}/likes");
         }
 
         public async Task<RestResponse> GetUsersWhoSavedPostAsync(string postId)
@@ -1507,27 +1161,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/post/{postId}/saves",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/post/{postId}/saves" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/post/{postId}/saves");
         }
 
         public async Task<RestResponse> GetUsersWhoSharedPostAsync(string postId)
@@ -1551,27 +1185,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/post/{postId}/shares",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/post/{postId}/shares" }
-                }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/post/{postId}/shares");
         }
 
         public async Task<RestResponse> ToggleFollowAsync(string targetUserId)
@@ -1615,19 +1229,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "POST",
-                Path = $"/api/user/{targetUserId}/follow",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/user/{targetUserId}/follow" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = result };
+            return buildResponse(status, result, "User", "POST", $"/api/user/{targetUserId}/follow");
         }
 
         public async Task<RestResponse> GetFollowersAsync(string userId)
@@ -1648,19 +1250,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/user/{userId}/followers",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/user/{userId}/followers" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = result };
+            return buildResponse(status, result, "User", "GET", $"/api/user/{userId}/followers");
         }
 
         public async Task<RestResponse> GetFollowingAsync(string userId)
@@ -1680,19 +1270,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/user/{userId}/following",
-                DataType = "application/json (array)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/user/{userId}/following" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = result };
+            return buildResponse(status, result, "User", "GET", $"/api/user/{userId}/following");
         }
 
         public async Task<RestResponse> DeleteProfileAsync(UserDeleteFormModel formModel)
@@ -1769,19 +1347,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 500, Phrase = ex.ToString() };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "User",
-                Method = "DELETE",
-                Path = "/api/user/delete",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", "/api/user/delete" } }
-            };
-
-            return new RestResponse { Status = status, Meta = meta, Data = null };
+            return buildResponse(status, null, "User", "DELETE", "/api/user/delete");
         }
 
         public async Task<RestResponse> GetCurrentUserAsync()
@@ -1819,27 +1385,8 @@ namespace SocialMediaBackend.Services.AppService
                     Phrase = ErrorWhileGettingUserInfo
                 };
             }
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Users",
-                Method = "GET",
-                Path = $"/api/user/getCurrentUser/",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string>
-                {
-                    { "self", $"/api/user/getCurrentUser/"},
-                }
-            };
 
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "User", "GET", $"/api/user/getCurrentUser/");
         }
 
         public async Task<RestResponse> EditPostAsync(PostEditFormModel formModel)
@@ -1938,24 +1485,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Post",
-                Method = "PUT",
-                Path = $"/api/post/edit/{formModel.PostId}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/post/edit/{formModel.PostId}" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+            return buildResponse(status, result, "Post", "PUT", $"/api/post/edit/{formModel.PostId}");
         }
 
         public async Task<RestResponse> DeletePostAsync(string postId)
@@ -1993,24 +1523,7 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Post",
-                Method = "DELETE",
-                Path = $"/api/post/{postId}/delete",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/post/{postId}/delete" } }
-            };
-
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = null
-            };
+            return buildResponse(status, null, "Post", "DELETE", $"/api/post/{postId}/delete");
         }
 
         public async Task<RestResponse> EditCommentAsync(CommentEditFormModel formModel)
@@ -2034,7 +1547,13 @@ namespace SocialMediaBackend.Services.AppService
                 if (comment.UserId.ToString() != userId)
                     throw new UnauthorizedAccessException(NotCommentOwnerError);
 
-                comment.Bio = formModel.Bio ?? comment.Bio;
+                if (string.IsNullOrWhiteSpace(formModel.Bio))
+                    throw new Exception(BioEmptyError);
+
+                comment.Bio = formModel.Bio;
+                comment.IsEdited = true;
+                comment.EditedAt = DateTime.UtcNow;
+
                 await dataAccessor.UpdateCommentAsync(comment);
                 comment = await dataAccessor.GetCommentByIdAsync(comment.Id.ToString());
 
@@ -2059,26 +1578,39 @@ namespace SocialMediaBackend.Services.AppService
                 status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
             }
 
-            var meta = new RestMeta
-            {
-                Service = "SocialMediaBackend",
-                Resource = "Comment",
-                Method = "PUT",
-                Path = $"/api/comment/edit/{formModel.CommentId}",
-                DataType = "application/json (object)",
-                ServerTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                Cache = 0,
-                Links = new Dictionary<string, string> { { "self", $"/api/comment/edit/{formModel.CommentId}" } }
-            };
+            return buildResponse(status, result, "Comment", "PUT", $"/api/comment/edit/{formModel.CommentId}");
+        }
 
-            return new RestResponse
-            {
-                Status = status,
-                Meta = meta,
-                Data = result
-            };
+        public async Task<RestResponse> DeleteCommentAsync(string commentId)
+        {
+            RestStatus status = RestStatus.Ok;
 
-            //TODO: доробити метод
+            try
+            {
+                if (string.IsNullOrWhiteSpace(commentId))
+                    throw new Exception(CommentIdEmptyError);
+
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                var comment = await dataAccessor.GetCommentByIdAsync(commentId);
+                if (comment is null)
+                    throw new CommentException(CommentNotFoundError);
+
+                if (comment.UserId.ToString() != userId)
+                    throw new UnauthorizedAccessException(NotCommentOwnerError);
+
+                comment.DeletedAt = DateTime.UtcNow;
+
+                await dataAccessor.UpdateCommentAsync(comment);
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            return buildResponse(status, null, "Comment", "DELETE", $"/api/comment/{commentId}/delete");
         }
     }
 }

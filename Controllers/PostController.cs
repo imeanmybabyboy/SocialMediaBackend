@@ -25,7 +25,7 @@ namespace SocialMediaBackend.Controllers
             return await result;
         }
 
-        [HttpGet("getUserPosts/{userId}")]
+        [HttpGet("getUserPosts/{userId}/{page?}")]
         [AllowAnonymous]
         public async Task<RestResponse> ApiUserPostsAsync([FromRoute] string userId, [FromRoute] int page = 1, [FromQuery] int pageSize = 5)
         {

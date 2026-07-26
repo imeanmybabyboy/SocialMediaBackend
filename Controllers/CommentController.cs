@@ -38,5 +38,12 @@ namespace SocialMediaBackend.Controllers
             var result = appService.EditCommentAsync(formModel);
             return await result;
         }
+
+        [HttpDelete("{commentId}/delete")]
+        public async Task<RestResponse> ApiDeleteCommentAsync([FromRoute] string commentId)
+        {
+            var result = appService.DeleteCommentAsync(commentId);
+            return await result;
+        }
     }
 }

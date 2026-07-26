@@ -3,6 +3,6 @@
     public class CommentEditFormModel
     {
         public string CommentId { get; set; } = null!;
-        public string? Bio { get; set; }
+        public string Bio { get; set; } = null!;
     }
 }
