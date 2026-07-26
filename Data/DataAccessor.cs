@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data.Entities;
-using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.User;
-using System.Formats.Asn1;
 
 namespace SocialMediaBackend.Data
 {
@@ -361,6 +359,8 @@ namespace SocialMediaBackend.Data
                 .Include(p => p.Comments)
                 .Include(p => p.PostsInterests)
                     .ThenInclude(pi => pi.Interest)
+                .Include(p => p.Likes)
+                .Include(p => p.Saves)
                 .FirstOrDefaultAsync(p => p.Id.ToString() == id);
 
             return await post;
@@ -787,6 +787,7 @@ namespace SocialMediaBackend.Data
                 .Select(f => mapUser(f.Following, currentGuid))
                 .ToListAsync();
         }
+
 
         private static UserProfileViewModel mapUser(Entities.User u, Guid? currentGuid) => new()
         {

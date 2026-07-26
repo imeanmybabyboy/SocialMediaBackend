@@ -1,6 +1,5 @@
 ﻿using ASP_PV411.Services.Kdf;
 using Microsoft.EntityFrameworkCore;
-using SocialMediaBackend.Data.Entities;
 
 namespace SocialMediaBackend.Data
 {
@@ -30,15 +29,6 @@ namespace SocialMediaBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
-
-            //modelBuilder.Entity<User>().HasData(SeedData.Users(_kdfService));
-            //modelBuilder.Entity<UserRole>().HasData(SeedData.UserRoles());
-            //modelBuilder.Entity<Post>().HasData(SeedData.Posts());
-            //modelBuilder.Entity<Comment>().HasData(SeedData.Comments());
-            //modelBuilder.Entity<Race>().HasData(SeedData.Races());
-            //modelBuilder.Entity<Interest>().HasData(SeedData.Interests());
-            //modelBuilder.Entity<UserInterest>().HasData(SeedData.UsersInterests());
-            //modelBuilder.Entity<PostInterest>().HasData(SeedData.PostsInterests());
         }
     }
 }

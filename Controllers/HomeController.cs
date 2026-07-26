@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Services.AppService;
 

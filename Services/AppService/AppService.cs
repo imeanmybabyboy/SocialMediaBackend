@@ -1,23 +1,16 @@
 ﻿using ASP_PV411.Services.Kdf;
 using ASP_PV411.Services.Salt;
-using Microsoft.AspNetCore.Authorization;
 using SocialMediaBackend.Data;
 using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Exceptions;
 using SocialMediaBackend.Middleware;
 using SocialMediaBackend.Models.Comment;
 using SocialMediaBackend.Models.Post;
-using SocialMediaBackend.Models.Race;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Models.User;
-using SocialMediaBackend.Services.AppService;
 using SocialMediaBackend.Services.BlobStorage;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SocialMediaBackend.Services.AppService
 {
@@ -62,7 +55,7 @@ namespace SocialMediaBackend.Services.AppService
             string resource,
             string method,
             string path,
-            string dataType = "application/json (object)",
+            string dataType = "application/json",
             Dictionary<string, string>? links = null)
         {
             return new RestResponse
@@ -768,7 +761,7 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            return buildResponse(status, result, "Posts", "GET", $"/api/home/posts/private/{page}?pageSize={pageSize}",
+            return buildResponse(status, result, "Post", "GET", $"/api/home/posts/private/{page}?pageSize={pageSize}",
                 links: buildPaginationLinks(page, p => $"/api/home/posts/private/{p}?pageSize={pageSize}"));
         }
 
@@ -1060,7 +1053,7 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            return buildResponse(status, result, "Posts", "GET", $"/api/user/likedPosts/{page}?pageSize={pageSize}",
+            return buildResponse(status, result, "Post", "GET", $"/api/user/likedPosts/{page}?pageSize={pageSize}",
                 links: buildPaginationLinks(page, p => $"/api/user/likedPosts/{p}?pageSize={pageSize}"));
         }
 
@@ -1087,7 +1080,7 @@ namespace SocialMediaBackend.Services.AppService
                 };
             }
 
-            return buildResponse(status, result, "Posts", "GET", $"/api/user/savedPosts/{page}?pageSize={pageSize}",
+            return buildResponse(status, result, "Post", "GET", $"/api/user/savedPosts/{page}?pageSize={pageSize}",
                 links: buildPaginationLinks(page, p => $"/api/user/savedPosts/{p}?pageSize={pageSize}"));
 
         }

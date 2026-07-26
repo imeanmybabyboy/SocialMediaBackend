@@ -1,5 +1,4 @@
-﻿using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Models.User;
