@@ -1,4 +1,5 @@
-﻿using SocialMediaBackend.Models.Comment;
+﻿using SocialMediaBackend.Models.Chat;
+using SocialMediaBackend.Models.Comment;
 using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
 using SocialMediaBackend.Models.User;
@@ -40,7 +41,7 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> GetCurrentUserAsync();
         public Task<RestResponse> EditPostAsync(PostEditFormModel formModel);
         public Task<RestResponse> DeletePostAsync(string postId);
-        public Task<RestResponse> SendMessageAsync(string targetUserId, string text);
+        public Task<RestResponse> SendMessageAsync(SendMessageFormModel formModel);
         public Task<RestResponse> GetChatMessageAsync(string targetUserId, int page = 1, int pageSize = 20);
     }
 }

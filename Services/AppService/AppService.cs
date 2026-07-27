@@ -4,6 +4,7 @@ using SocialMediaBackend.Data;
 using SocialMediaBackend.Data.Entities;
 using SocialMediaBackend.Exceptions;
 using SocialMediaBackend.Middleware;
+using SocialMediaBackend.Models.Chat;
 using SocialMediaBackend.Models.Comment;
 using SocialMediaBackend.Models.Post;
 using SocialMediaBackend.Models.Rest;
@@ -1606,7 +1607,7 @@ namespace SocialMediaBackend.Services.AppService
             return buildResponse(status, null, "Comment", "DELETE", $"/api/comment/{commentId}/delete");
         }
 
-        public async Task<RestResponse> SendMessageAsync(string targetUserId, string text)
+        public async Task<RestResponse> SendMessageAsync(SendMessageFormModel formModel)
         {
             RestStatus status = RestStatus.Ok;
             object? result = null;
@@ -1617,20 +1618,20 @@ namespace SocialMediaBackend.Services.AppService
                 if (string.IsNullOrWhiteSpace(senderId))
                     throw new UnauthorizedAccessException("UnauthorizedActionError");
 
-                if (senderId == targetUserId)
+                if (senderId == formModel.TargetUserId)
                     throw new Exception("You cannot send messages to yourself");
 
-                if (string.IsNullOrWhiteSpace(text))
+                if (string.IsNullOrWhiteSpace(formModel.Text))
                     throw new Exception("Message text cannot be empty");
 
-                var chat = await dataAccessor.GetOrCreateChatAsync(Guid.Parse(senderId), Guid.Parse(targetUserId));
+                var chat = await dataAccessor.GetOrCreateChatAsync(Guid.Parse(senderId), Guid.Parse(formModel.TargetUserId));
 
-                var message = new Data.Entities.Message
+                var message = new Message
                 {
                     Id = Guid.NewGuid(),
                     ChatId = chat.Id,
                     SenderId = Guid.Parse(senderId),
-                    Text = text,
+                    Text = formModel.Text,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -1639,10 +1640,10 @@ namespace SocialMediaBackend.Services.AppService
                 result = new
                 {
                     MessageId = message.Id,
-                    ChatId = message.ChatId,
-                    SenderId = message.SenderId,
-                    Text = message.Text,
-                    CreatedAt = message.CreatedAt
+                    message.ChatId,
+                    message.SenderId,
+                    message.Text,
+                    message.CreatedAt
                 };
             }
             catch (Exception ex)

@@ -788,6 +788,61 @@ namespace SocialMediaBackend.Data
                 .ToListAsync();
         }
 
+        public async Task<Chat> GetOrCreateChatAsync(Guid user1Id, Guid user2Id)
+        {
+            var chat = await dataContext.Chats
+                .FirstOrDefaultAsync(c =>
+                    (c.User1Id == user1Id && c.User2Id == user2Id) ||
+                    (c.User1Id == user2Id && c.User2Id == user1Id));
+
+            if (chat == null)
+            {
+                chat = new Chat
+                {
+                    Id = Guid.NewGuid(),
+                    User1Id = user1Id,
+                    User2Id = user2Id,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await dataContext.Chats.AddAsync(chat);
+                await dataContext.SaveChangesAsync();
+            }
+
+            return chat;
+        }
+        public async Task AddMessageAsync(Message message)
+        {
+            await dataContext.Messages.AddAsync(message);
+            await dataContext.SaveChangesAsync();
+        }
+        public async Task<object> GetChatMessagesAsync(Guid currentUserId, Guid targetUserId, int page = 1, int pageSize = 20)
+        {
+            page = page < 1 ? 1 : page;
+
+            var chat = await dataContext.Chats
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c =>
+                    (c.User1Id == currentUserId && c.User2Id == targetUserId) ||
+                    (c.User1Id == targetUserId && c.User2Id == currentUserId));
+
+            if (chat == null) return new List<object>();
+
+            return await dataContext.Messages
+                .AsNoTracking()
+                .Where(m => m.ChatId == chat.Id)
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(m => new
+                {
+                    MessageId = m.Id,
+                    m.ChatId,
+                    m.SenderId,
+                    m.Text,
+                    m.CreatedAt
+                })
+                .ToListAsync();
+        }
 
         private static UserProfileViewModel mapUser(Entities.User u, Guid? currentGuid) => new()
         {
