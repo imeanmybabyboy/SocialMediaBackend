@@ -37,6 +37,7 @@ namespace SocialMediaBackend.Middleware
                 context.User = new ClaimsPrincipal(
                     new ClaimsIdentity(
                         [
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                             new Claim(ClaimTypes.Sid, user.Id.ToString()),
                             new Claim(ClaimTypes.Name, user.Login),
                             new Claim(ClaimTypes.Email, user.Email ?? ""),

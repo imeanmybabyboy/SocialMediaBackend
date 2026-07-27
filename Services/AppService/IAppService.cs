@@ -40,5 +40,7 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> GetCurrentUserAsync();
         public Task<RestResponse> EditPostAsync(PostEditFormModel formModel);
         public Task<RestResponse> DeletePostAsync(string postId);
+        public Task<RestResponse> SendMessageAsync(string targetUserId, string text);
+        public Task<RestResponse> GetChatMessageAsync(string targetUserId, int page = 1, int pageSize = 20);
     }
 }

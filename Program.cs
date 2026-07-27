@@ -6,6 +6,7 @@ using ASP_PV411.Services.Salt;
 using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data;
 using SocialMediaBackend.Data.Entities;
+using SocialMediaBackend.Hubs;
 using SocialMediaBackend.Middleware;
 using SocialMediaBackend.Services.AppService;
 using SocialMediaBackend.Services.BlobStorage;
@@ -27,6 +28,7 @@ namespace SocialMediaBackend
             builder.Services.AddSingleton<AvatarStorageService>();
             builder.Services.AddSingleton<PostImageStorageService>();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSignalR();
 
             // Session
             builder.Services.AddDistributedMemoryCache();
@@ -125,6 +127,7 @@ namespace SocialMediaBackend
 
             app.UseSession();
             app.UseAuthSession();
+            app.MapHub<ChatHub>("/hubs/chat");
             app.UseAuthorization();
             app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); });
 

@@ -1605,5 +1605,73 @@ namespace SocialMediaBackend.Services.AppService
 
             return buildResponse(status, null, "Comment", "DELETE", $"/api/comment/{commentId}/delete");
         }
+
+        public async Task<RestResponse> SendMessageAsync(string targetUserId, string text)
+        {
+            RestStatus status = RestStatus.Ok;
+            object? result = null;
+
+            try
+            {
+                var senderId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(senderId))
+                    throw new UnauthorizedAccessException("UnauthorizedActionError");
+
+                if (senderId == targetUserId)
+                    throw new Exception("You cannot send messages to yourself");
+
+                if (string.IsNullOrWhiteSpace(text))
+                    throw new Exception("Message text cannot be empty");
+
+                var chat = await dataAccessor.GetOrCreateChatAsync(Guid.Parse(senderId), Guid.Parse(targetUserId));
+
+                var message = new Data.Entities.Message
+                {
+                    Id = Guid.NewGuid(),
+                    ChatId = chat.Id,
+                    SenderId = Guid.Parse(senderId),
+                    Text = text,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await dataAccessor.AddMessageAsync(message);
+
+                result = new
+                {
+                    MessageId = message.Id,
+                    ChatId = message.ChatId,
+                    SenderId = message.SenderId,
+                    Text = message.Text,
+                    CreatedAt = message.CreatedAt
+                };
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            return buildResponse(status, result, "Message", "POST", "/api/chat/send");
+        }
+
+        public async Task<RestResponse> GetChatMessageAsync(string targetUserId, int page = 1, int pageSize = 20)
+        {
+            RestStatus status = RestStatus.Ok;
+            object? result = null;
+
+            try
+            {
+                var currentUserId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(currentUserId))
+                    throw new UnauthorizedAccessException("UnauthorizedActionError");
+
+                result = await dataAccessor.GetChatMessagesAsync(Guid.Parse(currentUserId), Guid.Parse(targetUserId), page, pageSize);
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            return buildResponse(status, result, "Message", "GET", $"/api/chat/{targetUserId}/messages");
+        }
     }
 }
