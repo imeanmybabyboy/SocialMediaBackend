@@ -11,14 +11,14 @@ namespace SocialMediaBackend.Controllers
     public class ChatController(IAppService appService) : ControllerBase
     {
         [HttpPost("send")]
-        public async Task<RestResponse> ApiSendMessageAsync([FromBody] SendMessageFormModel formModel)
+        public async Task<RestResponse> ApiSendMessageAsync([FromForm] SendMessageFormModel formModel)
         {
             var result = appService.SendMessageAsync(formModel);
             return await result;
         }
 
         [HttpGet("{targetUserId}/messages")]
-        public async Task<RestResponse> ApiGetMessageAsync([FromQuery] string targetUserId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<RestResponse> ApiGetMessageAsync([FromRoute] string targetUserId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
             var result = appService.GetChatMessageAsync(targetUserId, page, pageSize);
             return await result;

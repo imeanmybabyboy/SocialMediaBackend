@@ -29,7 +29,7 @@ namespace SocialMediaBackend
             builder.Services.AddSingleton<PostImageStorageService>();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSignalR();
-
+            builder.Services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, SocialMediaBackend.Middleware.NoChallengeAuthorizationMiddlewareResultHandler>();
             // Session
             builder.Services.AddDistributedMemoryCache();
 
@@ -54,7 +54,7 @@ namespace SocialMediaBackend
             }));
             builder.Services.AddCors(options =>
                 options.AddDefaultPolicy(policy =>
-                    policy.WithOrigins("http://localhost:5173", "https://zealous-coast-02bfa1803.7.azurestaticapps.net")
+                    policy.WithOrigins("http://localhost:5173", "https://zealous-coast-02bfa1803.7.azurestaticapps.net", "http://localhost:5500")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials()
