@@ -8,6 +8,5 @@
         public string? Bio { get; set; }
         public string[]? Interests { get; set; }
         public bool? IsPrivate { get; set; }
-
     }
 }

@@ -428,7 +428,8 @@ namespace SocialMediaBackend.Services.AppService
                     Bio = formModel.Bio,
                     LikesQnt = 0,
                     SharesQnt = 0,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    IsPrivate = formModel.IsPrivate
                 };
 
                 try
@@ -474,6 +475,7 @@ namespace SocialMediaBackend.Services.AppService
                     SharesQnt = post.SharesQnt,
                     CreatedAt = post.CreatedAt,
                     DeletedAt = post.DeletedAt,
+                    IsPrivate = post.IsPrivate,
                     Comments = post.Comments.Select(c => new Models.Comment.CommentViewModel
                     {
                         Id = c.Id,
@@ -1452,6 +1454,7 @@ namespace SocialMediaBackend.Services.AppService
                     SharesQnt = post.SharesQnt,
                     CreatedAt = post.CreatedAt,
                     DeletedAt = post.DeletedAt,
+                    IsPrivate = post.IsPrivate,
                     Comments = post.Comments.Select(c => new Models.Comment.CommentViewModel
                     {
                         Id = c.Id,
@@ -1673,6 +1676,27 @@ namespace SocialMediaBackend.Services.AppService
             }
 
             return buildResponse(status, result, "Message", "GET", $"/api/chat/{targetUserId}/messages");
+        }
+
+        public async Task<RestResponse> GetUserChatsAsync()
+        {
+            RestStatus status = RestStatus.Ok;
+            object? result = null;
+
+            try
+            {
+                var currentUserId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(currentUserId))
+                    throw new UnauthorizedAccessException("UnauthorizedActionError");
+
+                result = await dataAccessor.GetUserChatsAsync(Guid.Parse(currentUserId));
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            return buildResponse(status, result, "Chats", "GET", "/api/chat/list", "application/json (array)");
         }
     }
 }

@@ -23,5 +23,12 @@ namespace SocialMediaBackend.Controllers
             var result = appService.GetChatMessageAsync(targetUserId, page, pageSize);
             return await result;
         }
+
+        [HttpGet("list")]
+        public async Task<RestResponse> ApiGetChatsAsync()
+        {
+            var result = appService.GetUserChatsAsync();
+            return await result;
+        }
     }
 }

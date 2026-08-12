@@ -10,6 +10,7 @@
         public string Bio { get; set; } = null!;
         public bool IsLiked { get; set; }
         public bool IsSaved { get; set; }
+        public bool IsPrivate { get; set; }
         public int LikesQnt { get; set; }
         public int SharesQnt { get; set; }
         public DateTime CreatedAt { get; set; }

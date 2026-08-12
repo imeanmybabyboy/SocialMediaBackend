@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaBackend.Data.Entities;
+using SocialMediaBackend.Models.Chat;
 using SocialMediaBackend.Models.User;
 
 namespace SocialMediaBackend.Data
@@ -32,7 +33,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => !p.IsPrivate)
+                .Where(p => !p.IsPrivate && p.DeletedAt == null)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -103,7 +104,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => currentUserRaceId != null && p.User!.RaceId == currentUserRaceId)
+                .Where(p => currentUserRaceId != null && p.User!.RaceId == currentUserRaceId && p.DeletedAt == null)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -165,7 +166,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => p.UserId.ToString() == userId)
+                .Where(p => p.UserId.ToString() == userId && p.DeletedAt == null)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -226,7 +227,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => p.Likes.Any(l => l.UserId == userGuid))
+                .Where(p => p.Likes.Any(l => l.UserId == userGuid) && p.DeletedAt == null)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -287,7 +288,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .Where(p => p.Saves.Any(l => l.UserId == userGuid))
+                .Where(p => p.Saves.Any(l => l.UserId == userGuid) && p.DeletedAt == null)
                 .OrderByDescending(p => p.CreatedAt)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -361,7 +362,7 @@ namespace SocialMediaBackend.Data
                     .ThenInclude(pi => pi.Interest)
                 .Include(p => p.Likes)
                 .Include(p => p.Saves)
-                .FirstOrDefaultAsync(p => p.Id.ToString() == id);
+                .FirstOrDefaultAsync(p => p.Id.ToString() == id && p.DeletedAt == null);
 
             return await post;
         }
@@ -842,6 +843,43 @@ namespace SocialMediaBackend.Data
                     m.CreatedAt
                 })
                 .ToListAsync();
+        }
+
+        public async Task<List<ChatPreviewViewModel>> GetUserChatsAsync(Guid userId)
+        {
+            var chats = await dataContext.Chats
+                .AsNoTracking()
+                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .Select(c => new ChatPreviewViewModel
+                {
+                    ChatId = c.Id,
+                    OtherUserId = c.User1Id == userId ? c.User2Id : c.User1Id,
+                    OtherUserLogin = c.User1Id == userId ? c.User2.Login : c.User1.Login,
+                    OtherUserNickname = c.User1Id == userId ? c.User2.Nickname : c.User1.Nickname,
+                    OtherUserImageUrl = c.User1Id == userId ? c.User2.ImageUrl : c.User1.ImageUrl,
+                    LastMessageText = dataContext.Messages
+                        .Where(m => m.ChatId == c.Id)
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Select(m => m.Text)
+                        .FirstOrDefault(),
+                    LastMessageSenderId = dataContext.Messages
+                        .Where(m => m.ChatId == c.Id)
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Select(m => (Guid?)m.SenderId)
+                        .FirstOrDefault(),
+                    LastMessageAt = dataContext.Messages
+                        .Where(m => m.ChatId == c.Id)
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Select(m => (DateTime?)m.CreatedAt)
+                        .FirstOrDefault()
+                })
+                .ToListAsync();
+
+            return chats
+                .OrderByDescending(c => c.LastMessageAt ?? DateTime.MinValue)
+                .ToList();
         }
 
         private static UserProfileViewModel mapUser(Entities.User u, Guid? currentGuid) => new()
