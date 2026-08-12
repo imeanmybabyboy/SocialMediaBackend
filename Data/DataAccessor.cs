@@ -808,7 +808,12 @@ namespace SocialMediaBackend.Data
                 await dataContext.Chats.AddAsync(chat);
                 await dataContext.SaveChangesAsync();
             }
+            else if (chat.DeletedAt != null)
+            {
+                chat.DeletedAt = null;
+            }
 
+            await dataContext.SaveChangesAsync();
             return chat;
         }
         public async Task AddMessageAsync(Message message)
@@ -849,7 +854,7 @@ namespace SocialMediaBackend.Data
         {
             var chats = await dataContext.Chats
                 .AsNoTracking()
-                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Where(c => (c.User1Id == userId || c.User2Id == userId) && c.DeletedAt == null)
                 .Include(c => c.User1)
                 .Include(c => c.User2)
                 .Select(c => new ChatPreviewViewModel
@@ -880,6 +885,20 @@ namespace SocialMediaBackend.Data
             return chats
                 .OrderByDescending(c => c.LastMessageAt ?? DateTime.MinValue)
                 .ToList();
+        }
+        public async Task DeleteChatAsync(Guid chatId, Guid currentUserId)
+        {
+            var chat = await dataContext.Chats
+                    .FirstOrDefaultAsync(c => c.Id == chatId && c.DeletedAt == null);
+
+            if (chat is null)
+                throw new Exception("Chat not found");
+
+            if (chat.User1Id != currentUserId && chat.User2Id != currentUserId)
+                throw new UnauthorizedAccessException("You are not a participant of this chat");
+
+            chat.DeletedAt = DateTime.UtcNow;
+            await dataContext.SaveChangesAsync();
         }
 
         private static UserProfileViewModel mapUser(Entities.User u, Guid? currentGuid) => new()

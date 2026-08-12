@@ -30,5 +30,12 @@ namespace SocialMediaBackend.Controllers
             var result = appService.GetUserChatsAsync();
             return await result;
         }
+
+        [HttpDelete("{chatId}/delete")]
+        public async Task<RestResponse> ApiDeleteChatAsync([FromRoute] string chatId)
+        {
+            var result = appService.DeleteChatAsync(chatId);
+            return await result;
+        }
     }
 }

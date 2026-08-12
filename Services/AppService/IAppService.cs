@@ -44,5 +44,6 @@ namespace SocialMediaBackend.Services.AppService
         public Task<RestResponse> SendMessageAsync(SendMessageFormModel formModel);
         public Task<RestResponse> GetChatMessageAsync(string targetUserId, int page = 1, int pageSize = 20);
         public Task<RestResponse> GetUserChatsAsync();
+        public Task<RestResponse> DeleteChatAsync(string chatId);
     }
 }

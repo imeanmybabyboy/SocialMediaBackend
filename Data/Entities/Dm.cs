@@ -6,6 +6,7 @@
         public Guid User1Id { get; set; }
         public Guid User2Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? DeletedAt { get; set; }
 
         public virtual User User1 { get; set; } = null!;
         public virtual User User2 { get; set; } = null!;

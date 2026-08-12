@@ -46,6 +46,7 @@ namespace SocialMediaBackend.Services.AppService
         private const string UnauthorizedActionError = "You must be logged in to perform an authorized action";
         private const string CommentNotFoundError = "Comment not found";
         private const string CannotFollowYourselfError = "You cannot follow yourself";
+        private const string ChatIdEmptyError = "ChatId cannot be empty";
 
         /// <summary>
         /// Builds a ready-to-return RestResponse, filling separate for each response fields
@@ -1697,6 +1698,29 @@ namespace SocialMediaBackend.Services.AppService
             }
 
             return buildResponse(status, result, "Chats", "GET", "/api/chat/list", "application/json (array)");
+        }
+
+        public async Task<RestResponse> DeleteChatAsync(string chatId)
+        {
+            RestStatus status = RestStatus.Ok;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(chatId))
+                    throw new Exception(ChatIdEmptyError);
+
+                var userId = sessionUserId();
+                if (string.IsNullOrWhiteSpace(userId))
+                    throw new UnauthorizedAccessException(UnauthorizedActionError);
+
+                await dataAccessor.DeleteChatAsync(Guid.Parse(chatId), Guid.Parse(userId));
+            }
+            catch (Exception ex)
+            {
+                status = new RestStatus { IsOk = false, Code = 400, Phrase = ex.Message };
+            }
+
+            return buildResponse(status, null, "Chat", "DELETE", $"/api/chat/{chatId}");
         }
     }
 }
