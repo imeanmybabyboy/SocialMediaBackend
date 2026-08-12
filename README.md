@@ -181,3 +181,54 @@ body (formData): {
   string? Bio
 }
 ```
+
+### ChatController:
+```
+Send a private message:
+[POST]
+/api/chat/send
+body: {
+  string TargetUserId
+  string Text
+}
+
+Get message history with a user:
+[GET]
+/api/chat/{targetUserId}/messages/{page?}/?pageSize={pageSize}
+```
+
+### 1. Real-time chat (SignalR)
+```
+npm install @microsoft/signalr
+```
+
+### 2. Connect (after the user is signed in)
+```
+import * as signalR from "@microsoft/signalr";
+
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl("https://<your-backend-host>/hubs/chat", { withCredentials: true })
+  .withAutomaticReconnect()
+  .build();
+
+await connection.start();
+```
+
+### 3. Listen for incoming messages
+```
+connection.on("ReceiveMessage", (message) => {
+  // fires on the recipient's connection when someone sends them a message
+});
+
+connection.on("MessageSent", (message) => {
+  // fires on the sender's own connection, as delivery confirmation
+});
+```
+
+### 4. Send a message
+```
+await connection.invoke("SendPrivateMessage", {
+  targetUserId: "<guid of the recipient>",
+  text: "hello!"
+});
+```
