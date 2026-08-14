@@ -195,6 +195,14 @@ body: {
 Get message history with a user:
 [GET]
 /api/chat/{targetUserId}/messages/{page?}/?pageSize={pageSize}
+
+Get your chats with users:
+[GET]
+/api/chat/list
+
+Delete a chat:
+[DELETE]
+/api/chat/{chatId}/delete
 ```
 
 ### 1. Real-time chat (SignalR)
